@@ -1,0 +1,72 @@
+/grub4dos/8x16_866.psf
+/grub4dos/hotkey
+#title \n
+#root
+title                   GRUB -> Linux\n
+
+root
+title grub> ls	[ find ][ geometry (hd1) ]\n просмотр возможных разделов и дисков
+root
+title grub> ls (hd1,1) /\n HDD(0,0) - FISRT DISK where botting, диск и раздела начинаются с 0
+root
+title grub> root (hd1,1)
+root
+title grub> kernel /vmlinuz root=/dev/sda1	( kernel (hd0,1)/vmlinuz ... )
+root
+title grub> initrd /initrd.img
+root
+title grub> boot
+root
+#=====================================
+title [P] <-- Previous Menu
+find --set-root /menu.lst
+configfile /menu.lst
+#=====================================
+title                   GRUB 2 -> Linux\n
+root
+With linux GRUB uses 32-bit protocol. Some BIOS services like APM or EDD aren't available 
+with this protocol. In this case you need to use linux16. Load a Linux kernel image from 
+file in 16-bit mode.
+title grub> ls	[ find ][ geometry (hd1) ]\n просмотр возможных разделов и дисков
+root
+title grub> ls (hd1,1) /\n HDD(1,1) - FISRT DISK where botting
+root
+title grub> set root=(hd1,1)\n
+root
+title grub> linux /vmlinuz root=/dev/sda1	( linux16 /vmlinuz ... )\n
+root
+title grub> initrd /initrd.img		( initrd16 /initrd.img )\n
+root
+title grub> boot\n
+#=====================================
+title [P] <-- Previous Menu
+find --set-root /menu.lst
+configfile /menu.lst
+#=====================================
+title \n
+root
+title                  GRUB  -> Windows\n
+root
+title                  GRUB  -> Windows\n
+root
+title grub> ls	[ geometry (hd1) ][ map (hd1,<tab> ]\n просмотр возможных разделов и дисков
+root
+title grub> ls (hd1,1) /\n 
+root
+title grub> rootnoverify (hd1,1)\n
+root
+title grub> chainloader +1		XP( chainloader /ntldr ) 7( chainloader /bootmgr )\n
+root
+title grub> boot\n
+root
+#=====================================
+title [P] <-- Previous Menu
+find --set-root /menu.lst
+configfile /menu.lst
+#=====================================
+title Помощь по команде grub>help <command> \n
+root
+title А еще можно grub>cat (hd0,0)/GRUB2.txt \n
+root
+title Поиск файла find --ignore-floppies --ignore-cd /<File> \n
+root
