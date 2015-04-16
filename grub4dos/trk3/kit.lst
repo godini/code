@@ -1,0 +1,31 @@
+#-TRK_3-4 as a volume label (exactly like this). Another volume label 
+#(e.g. RESCUEDISK is possible, but than you would have to add "vollabel=RESCUEDISK" 
+#after each line that says "append initrd=..." in /syslinux.cfg
+#=====================================
+#title SlaxLinux (KDE)
+#kernel /slax/vmlinuz ramdisk_size=6666 root=/dev/ram0 rw autoexec=xconf;startx
+#initrd /slax/initrd.gz
+#=====================================
+title Trinity Rescue Kit 3.4 (default mode, with text menu)
+kernel /trk3/kernel.trk ramdisk_size=65536 root=/dev/ram0 vga=788 splash=verbose pci=conf1 trkmenu
+initrd /trk3/initrd.trk
+#=====================================
+title TRK 3.4 in failsafe mode (No menu, VGA, noacpi, noapic)
+kernel /trk3/kernel.trk ramdisk_size=65536 root=/dev/ram0 vga=788 splash=verbose acpi=off noapic pci=conf1 vga=1
+initrd /trk3/initrd.trk
+#=====================================
+title TRK 3.4 running from RAM (best >= 512mb, 256mb min)
+kernel /trk3/kernel.trk ramdisk_size=65536 root=/dev/ram0 vga=788 splash=verbose pci=conf1 trkinmem trkmenu
+initrd /trk3/initrd.trk
+#=====================================
+title SlaxLinux Fresh\nMore about currently selected:Normally Slax saves all changes to the /slax/changes/ directory on the boot media (if writable) and restores them next time. Use this option to start fresh system, no changes are neither read nor written anywhere
+kernel /slax/vmlinuz amdisk_size=6666 root=/dev/ram0 rw autoexec=xconf;telinit~4
+initrd /slax/initrd.gz
+#=====================================
+title <- Previous Menu 
+find --set-root /liveos.lst
+configfile /liveos.lst
+
+title <- First Menu
+find --set-root /menu.lst
+configfile /menu.lst
