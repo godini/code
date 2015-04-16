@@ -1,0 +1,65 @@
+/grub4dos/8x16_866.psf
+/grub4dos/hotkey
+	# Menu Autonumber
+write 0x8274 0x2001
+set DIR=testpc
+#=====================================
+title [P] <-- Previous Menu
+find --set-root /menu.lst
+configfile /menu.lst
+
+title Boot from HDD1
+map (hd0) (hd1)
+map (hd1) (hd0)
+map --hook
+chainloader (hd1,0)+1
+
+title Boot from HDD1 Partition 2
+map (hd0) (hd1)
+map (hd1) (hd0)
+map --hook
+chainloader (hd1,1)+1
+
+title Boot from HDD1 Partition 3
+map (hd0) (hd1)
+map (hd1) (hd0)
+map --hook
+chainloader (hd1,3)+1
+
+title Boot from HDD1 Partition 4
+map (hd0) (hd1)
+map (hd1) (hd0)
+map --hook
+chainloader (hd1,4)+1
+
+title \n
+root
+
+title Boot from HDD2
+map (hd0) (hd1)
+map (hd1) (hd0)
+map --hook
+chainloader (hd2,0)+1
+
+title Boot from HDD2 Partition 2
+map (hd0) (hd1)
+map (hd1) (hd0)
+map --hook
+chainloader (hd2,1)+1
+
+title Boot from HDD2 Partition 3
+map (hd0) (hd1)
+map (hd1) (hd0)
+map --hook
+chainloader (hd2,3)+1
+
+title Boot from HDD2 Partition 4
+map (hd0) (hd1)
+map (hd1) (hd0)
+map --hook
+chainloader (hd2,4)+1
+
+#=====================================
+title [P] <-- Previous Menu
+find --set-root /menu.lst
+configfile /menu.lst
