@@ -1,0 +1,139 @@
+/grub4dos/8x16_866.psf
+/grub4dos/hotkey
+	# Menu Autonumber
+#write 0x8274 0x2001
+set DIR=grub4dos
+
+title ^P <- 0 - Previous Menu   --PRESS P
+find --set-root /menu.lst
+configfile /menu.lst
+#=====================================
+title Winternals NTFS check
+map --mem  /%DIR%/WinternalsNTFScheck.IMA (fd0)
+map --hook
+chainloader (fd0)+1
+rootnoverify (fd0)
+map --floppies=1
+boot
+#=====================================
+title Universal Boot Disk 3.7\n MSDOS + 
+map --mem /%DIR%/UniversalBootDisk3.7.ima (fd0)
+map --hook
+chainloader (fd0)+1
+rootnoverify (fd0)
+map --floppies=1
+boot
+#=====================================
+title VC_NTFS_SCSI
+map --mem /%DIR%/vc_ntfs.ima (fd0)
+map --hook
+chainloader (fd0)+1
+rootnoverify (fd0)
+map --floppies=1
+boot
+#=====================================
+title Volkov_Commander_NTFS
+map --mem  /%DIR%/Volkov_CommanderNTFS.IMA (fd0)
+map --hook
+chainloader (fd0)+1
+rootnoverify (fd0)
+map --floppies=1
+boot
+#=====================================
+title Samboot Bootable Disk 1.2 (WinME)
+map --mem /%DIR%/samboot_bootable_disk.ima (fd0)
+map --hook
+chainloader (fd0)+1
+rootnoverify (fd0)
+map --floppies=1
+boot
+#=====================================
+title netboot (MSDOS)
+map --mem /%DIR%/netboot.img (fd0)
+map --hook
+chainloader (fd0)+1
+rootnoverify (fd0)
+map --floppies=1
+boot
+#=====================================
+title gPXE
+find --set-root /grldr
+kernel /%DIR%/gpxe
+#=====================================
+title Network_Boot_Disk_Configuration_Too_v.3.55
+map --mem  /%DIR%/Network_Boot_Disk_Configuration_Too_v.3.55.IMA (fd0)
+map --hook
+chainloader (fd0)+1
+rootnoverify (fd0)
+map --floppies=1
+boot
+#=====================================
+title netboot.me\n netboot.me is a service that allows you to boot nearly any operating system or\n utility on any computer with a wired internet connection - without having to\n know ahead of time what you'll want to boot. Once you can netboot.me, you\n never need to update your boot disk again!
+kernel /%DIR%/netbootme.lkrn
+map --unmap=0:0xff
+#=====================================
+title MS-DOS 6.22 + KillCMOS
+map --mem /%DIR%/MS-DOS622.ima.gz (fd0)
+map --hook
+chainloader (fd0)+1
+rootnoverify (fd0)
+#=====================================
+title MS-DOS 8.0 for Windows Melenium\n without ntfs
+map --mem /%DIR%/winme.ima (fd0)
+map --hook
+chainloader (fd0)+1
+#map (hd1) (hd0)
+map --hook
+rootnoverify (fd0)
+#=====================================
+title NTFS_for_Dos_Live\n NTFS driver /NTFS/PARAGON/mount.bat
+map --mem /%DIR%/doslive-kdn-2.IMA (fd0) 
+map --hook
+chainloader (fd0)+1
+#map (hd1) (hd0)
+map --hook
+rootnoverify (fd0)
+boot
+
+#=====================================
+title Dos Programs\nRun Dos Programs, esli chto ne rabotaet naiti eto cherez vc.exe
+set dos=/HBCD/Dos/dos.gz
+find --set-root /HBCD/Boot/dos.img && set dos=/HBCD/Boot/dos.img
+# to make big floppy image of all the dos programs (Useful when booted from NTFS usb drive) open HBCD\DOS\dosimg.cmd
+find --set-root %dos%
+map --mem %dos% (fd0)
+map --hook
+chainloader (fd0)+1
+rootnoverify (fd0)
+map --floppies=1
+
+title Dos Programs (Alternative Boot Method)\nUsing Memdisk, ᫨ 袮 ⠠ᠭ 䡪㢯 ஡㪠⦠禠 vc.exe
+set dos=/HBCD/Dos/dos.gz
+find --set-root /HBCD/Boot/dos.img && set dos=/HBCD/Boot/dos.img
+find --set-root %dos%
+kernel /HBCD/Boot/memdisk floppy
+initrd %dos%
+
+title Dos Programs (Alternative Boot Method 2)\nUsing ISO image, ᫨ 袮 ⠠ᠭ 䡪㢯 ஡㪠⦠禠 vc.exe
+map /HBCD/Dos/HBCD_15.2.iso (0xff) || map --mem /HBCD/Dos/HBCD_15.2.iso (0xff)
+map --hook 
+chainloader (0xff)
+root (0xff)
+boot
+
+title UBCD FreeDOS programs\n Ultimate Boot CD based on ver. 5.1.1\nᣠ ᤡ㭡 ⢠᢭묨 ⣠, ᫨ ઠ⬠஡㪠 禠 - UMBPCI(optimal)
+map /ubcd/UBCD_FreeDOS_on_ver_5.iso (0xff)
+map --hook 
+chainloader (0xff)
+root (0xff)
+boot
+#=====================================
+title Fix "NTLDR is Missing" \n ⢢ࠧᣧ稪 Windows, ᰠ𐭠ᩢ㡦쪠\n  ঠᣧ   뢮㭡饭 "NTLDR is Missing"
+find --set-root /HBCD/Boot/ntldr.gz
+kernel /HBCD/Boot/memdisk
+initrd /HBCD/Boot/ntldr.gz
+
+#=====================================
+title ^P <- 0 - Previous Menu   --PRESS P
+find --set-root /menu.lst
+configfile /menu.lst
