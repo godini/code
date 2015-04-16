@@ -1,0 +1,46 @@
+/boot/textfont /boot/8x16_866.psf
+	# Menu Autonumber
+write 0x8274 0x2001
+set DIR=knppx
+#%DIR%
+/grub4dos/fat
+fat ren /knppx/knoppix /knppx/knoppix.tmp
+fat ren /knppx/knoppix.tmp /knppx/KNOPPIX
+#=====================================
+title <- 0 - Previous Menu
+find --set-root /menu.lst
+configfile /menu.lst
+#=====================================
+title Knoppix live default
+kernel /knppx/linux lang=en apm=power-off nomce libata.force=noncq hpsa.hpsa_allow_any=1 loglevel=0 BOOT_IMAGE=KNOPPIX knoppix_dir=/knppx/
+initrd /knppx/minirt.gz
+#=====================================
+title knoppix64 live default
+kernel /knppx/linux64 lang=en apm=power-off nomce libata.force=noncq hpsa.hpsa_allow_any=1 loglevel=0 BOOT_IMAGE=KNOPPIX knoppix_dir=/knppx/
+initrd /knppx/minirt.gz
+#=====================================
+title Knoppix live alternative nosound
+kernel /knppx/linux lang=en nosound BOOT_IMAGE=KNOPPIX knoppix_dir=/knppx/
+initrd /knppx/minirt.gz
+#=====================================
+
+#=====================================
+title Knoppix failsafe
+kernel /knppx/linux lang=en vga=normal atapicd nosound noapic nolapic noacpi pnpbios=off acpi=off nofstab noscsi nodma noapm nousb nopcmcia nofirewire noagp nomce libata.force=noncq hpsa.hpsa_allow_any=1 nonetwork nodhcp BOOT_IMAGE=KNOPPIX knoppix_dir=/knppx/
+initrd /knppx/minirt.gz
+#=====================================
+title Knoppix live debug
+kernel /knppx/linux lang=en nosound BOOT_IMAGE=KNOPPIX knoppix_dir=/knppx/ debug
+initrd /knppx/minirt.gz
+#=====================================
+
+#=====================================
+
+#ramdisk_size=100000 lang=en vt.default_utf8=0 apm=power-off vga=788 xmodule=fbdev nomce quiet loglevel=0 nolapic_timer
+#xkeyboard=us,ru keyboard=ru tz=Europe/Moscow
+#bootfrom=UUID=<uuid>/boot/iso/knoppix.iso
+
+
+title <- Previous Menu
+find --set-root /menu.lst
+configfile /menu.lst
