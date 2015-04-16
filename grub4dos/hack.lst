@@ -1,0 +1,162 @@
+/grub4dos/8x16_866.psf
+/grub4dos/hotkey
+	# Menu Autonumber
+write 0x8274 0x2001
+title [P] <-- Previous Menu
+find --set-root /menu.lst
+configfile /menu.lst
+#=====================================
+title Offline Windows Password Registry Editor 140201(Windows Reset Password (Linux))
+find --set-root /hack/OfflineWindowsPasswordRegistryEditor_cd140201.iso
+map /hack/OfflineWindowsPasswordRegistryEditor_cd140201.iso (0xff)
+map --hook 
+chainloader (0xff)
+root (0xff) 
+#=====================================
+title Windows Registry Edit Utility (lin)\n Windows pass
+kernel /hack/chntpw/vmlinuz rw vga=1 loglevel=0 
+initrd /hack/chntpw/initrd.cgz /hack/chntpw/scsi.cgz
+#=====================================
+title Active Password Changer Professional 5.0
+find --set-root --ignore-floppies /SSTR/DOS/ActivePasswordChanger5.iso
+map --mem /SSTR/DOS/ActivePasswordChanger5.iso (hd32)
+map --hook
+chainloader (hd32)
+boot
+#=====================================
+title Windows Change Password / Registry Editor / Boot CD (Lin)
+find --set-root /hack/wcp/vmlinuz
+kernel /hack/wcp/vmlinuz vga=1
+initrd /hack/wcp/initrd.cgz /hack/wcp/scsi.cgz
+#=====================================
+title ResetWindowsPassword1.1.0.148Rus\nThe product is licensed to:\nDavid Johnson\nThe license key for Reset Windows Password (Light Edition) is listed below\n RWPL-SE4QW-3UEMM-4XVDM-A2ZUA-6EYZG\n
+find --set-root /hack/ResetWindowsPassword1.1.0.148Rus.iso
+map --mem /hack/ResetWindowsPassword1.1.0.148Rus.iso (0xff)
+map --hook
+chainloader (0xff)
+rootnoverify (0xff)
+#=====================================
+title WindowsPasswordRecovery4Bootdisk\n Display HEX pass
+find --set-root /hack/WindowsPasswordRecovery4Bootdisk.iso
+map --mem /hack/WindowsPasswordRecovery4Bootdisk.iso (0xff) 
+map --hook 
+chainloader (0xff)
+rootnoverify (0xff) 
+#=====================================
+title Kon-Boot\nBoot without pass Windows and Linux (kon-usr) 
+set kon=konboot.gz
+find --set-root /HBCD/Boot/konboot.gz | set iscd=
+find --set-root /HBCD/Boot/konbootp.gz && set kon=konbootp.gz
+map --mem /HBCD/Boot/%kon% (fd0)
+map --hook
+chainloader (fd0)+1
+if not "%iscd%"=="(cd)" pause --wait=2 HDD SWAP
+if not "%iscd%"=="(cd)" map (hd1) (hd0) 
+map --hook
+rootnoverify (fd0)
+map --floppies=1
+
+title Kon-Boot1.1\nWindows (any/blank password) and Linux (kon-usr) Login Without a Password
+find --set-root /HBCD/Boot/konboot1.1.gz
+map --mem /HBCD/Boot/konboot1.1.gz (fd0)
+map --hook
+chainloader (fd0)+1
+if not "%iscd%"=="(cd)" pause --wait=2 HDD SWAP
+if not "%iscd%"=="(cd)" map (hd1) (hd0)
+map --hook
+rootnoverify (fd0)
+map --floppies=1
+
+title Kon-Boot_v2.0img
+map --mem /HBCD/Boot/konboot2.img (fd0)
+map --hook
+chainloader (fd0)+1
+map (hd1) (hd0)
+map --hook
+rootnoverify (fd0)
+#=====================================
+title Windows Key Enterprise v11.0 Build 3579 Rus \n debug off \n
+map --floppies=1
+map --mem /grub4dos/firadisk.gz (fd0)
+map --mem /hack/PasswareWindowsKey.Enterprise.11.0.3579.iso (0xFF)
+map --hook
+ls (fd0)/firadisk.sys
+chainloader (0xFF)
+#=====================================
+title Elcomsoft.System.Recovery.Professional.3.0.0.466\nࠧᠯ좠㢯 ࡢꡡ⠭ᣫ ஫
+find --set-root /hack/Elcomsoft.System.Recovery.Professional.3.0.0.466.iso
+map /hack/Elcomsoft.System.Recovery.Professional.3.0.0.466.iso (0xff) || map --mem /hack/Elcomsoft.System.Recovery.Professional.3.0.0.466.iso (0xff)
+map --hook
+chainloader (0xff)
+#=====================================
+title ====== DOS ====== \n
+root ()
+#=====================================
+title HBCD15.2rus DOS\nRUN HBCD Dos
+find --set-root /HBCD/Dos/hiren.ima
+map --read-only /HBCD/Dos/hiren.ima (fd0) || map --mem /HBCD/Dos/hiren.ima (fd0)
+map --hook
+chainloader (fd0)+1
+rootnoverify (fd0)
+map --floppies=1
+
+title HBCD15.2rus DOS Alternative\nRUN HBCD Dos memdisk
+find --set-root /HBCD/Dos/hiren.ima
+kernel /HBCD/Boot/memdisk
+initrd /HBCD/Dos/hiren.ima
+#=====================================
+title Dos Programs HBCD15.2 \nRun Dos Programs, esli chto ne rabotaet naiti eto cherez vc.exe
+set dos=/HBCD/Dos/dos.gz
+find --set-root /HBCD/Boot/dos.img && set dos=/HBCD/Boot/dos.img
+# to make big floppy image of all the dos programs (Useful when booted from NTFS usb drive) open HBCD\DOS\dosimg.cmd
+find --set-root %dos%
+map --mem %dos% (fd0)
+map --hook
+chainloader (fd0)+1
+rootnoverify (fd0)
+map --floppies=1
+
+title Dos Programs HBCD15.2 (Alternative Boot Method)\nUsing Memdisk,Run Dos Programs, esli chto ne rabotaet naiti eto cherez vc.exe
+set dos=/HBCD/Dos/dos.gz
+find --set-root /HBCD/Boot/dos.img && set dos=/HBCD/Boot/dos.img
+find --set-root %dos%
+kernel /HBCD/Boot/memdisk floppy
+initrd %dos%
+
+title Dos Programs HBCD15.2 (Alternative Boot Method 2)\nUsing ISO image, ୠ⨢맠⮤ vc.exe
+map /HBCD/Dos/HBCD_15.2.iso (0xff) || map --mem /HBCD/Dos/HBCD_15.2.iso (0xff)
+map --hook 
+chainloader (0xff)
+root (0xff)
+boot
+#=====================================
+title UBCD FreeDOS programs\n Ultimate Boot CD based on ver. 5.1.1\nᣠ ᤡ㭡 ⢠᢭묨 ⣠, ᫨ ઠ⬠஡㪠 禠 - UMBPCI(optimal)
+map /ubcd/UBCD_FreeDOS_on_ver_5.iso (0xff)
+map --hook 
+chainloader (0xff)
+root (0xff)
+boot
+#=====================================
+
+title CmosPwd
+find --set-root /hack/CmosPwd.iso
+map /hack/CmosPwd.iso (0xff) || map --mem /hack/CmosPwd.iso (0xff)
+map --hook
+chainloader (0xff)
+
+title bios ->
+find --set-root /ubcd/menus/bios.lst
+configfile /ubcd/menus/bios.lst
+#=====================================
+title rescatux_0.30.2_32bits_linOS\n Clear passwords Windows/linus, Fix GRUB/GRUB2, FIX FS
+kernel /live/vmlinuz boot=live config quiet
+initrd /live/initrd.img
+#=====================================
+#=====================================
+title rescatux_0.30.2_64bits\n Clear passwords Windows/linus, Fix GRUB/GRUB2, FIX FS
+kernel /live/vmlinuz2 boot=live config quiet
+initrd /live/initrd2.img
+
+title [P] <-- Previous Menu
+find --set-root /menu.lst
+configfile /menu.lst
