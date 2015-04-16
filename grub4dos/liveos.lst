@@ -1,0 +1,122 @@
+/grub4dos/8x16_866.psf
+/grub4dos/hotkey
+	# Menu Autonumber
+write 0x8274 0x2001
+set DIR=liveos
+#%DIR%
+#=====================================
+title [P] <-- Previous Menu
+find --set-root /menu.lst
+configfile /menu.lst
+#=====================================
+title ====== LINUX ====== \n
+root ()
+#=====================================
+
+#=====================================
+
+#=====================================
+title [S] systemrescuecd-x86x64-4.4.0 (Linux) ->
+find --set-root /efi/sysrescue/grub.cfg
+configfile /efi/sysrescue/grub.cfg
+#=====================================
+title [K] KNOPPIX_V7.4.2  ->\n
+find --set-root /knppx/menu.lst
+configfile /knppx/menu.lst
+#=====================================
+title [M] PartedMagic 2014_09_29  ->
+find --set-root /efi/pmagic/grub.cfg
+configfile /efi/pmagic/grub.cfg
+#=====================================
+title [T] Trinity Rescue Kit 3.4 (Linux)-> \n Trinity Rescue Kit or TRK is a free live Linux distribution that aims specifically at recovery and repair operations on Windows machines, but is equally usable for Linux recovery issues
+find --set-root /trk3/kit.lst
+configfile /trk3/kit.lst
+#=====================================
+title [X] tails-i386-1.3  ->\nREAD /tails/tails_key.txt and KEY /tails/tails-signing_Tails.key
+find --set-root /tails/menu.lst
+configfile /tails/menu.lst
+#=====================================
+title [A] kali-linux-1.0.9a-i386  ->\n
+find --set-root /kali/menu.lst
+configfile /kali/menu.lst
+#=====================================
+title [E] rescatux_0.30.2_32bits_linOS\n Clear passwords Windows/linus, Fix GRUB/GRUB2, FIX FS
+kernel /live/vmlinuz boot=live config quiet
+initrd /live/initrd.img
+#=====================================
+title [W] rescatux_0.30.2_64bits\n Clear passwords Windows/linus, Fix GRUB/GRUB2, FIX FS
+kernel /live/vmlinuz2 boot=live config quiet
+initrd /live/initrd2.img
+#=====================================
+
+
+#=====================================
+title ====== WINDOWS ====== \n
+root ()
+#=====================================
+title [R] RusLive_Ram_Mini_2011_04_06_(WinPE)(fast)
+map /liveos/RusLive_Ram_Mini_2011_04_06.ISO (0xFF)
+map --hook
+chainloader (0xFF)
+rootnoverify (0xFF)
+#=====================================
+title [I] Mini Windows XP HBCD15.2 (fast)\nRun Antivirus and other windows programs
+# example password: test 
+# password --md5 $1$gNe0$KZPOE8wNbTNSKOzrajuoB0
+find --set-root /HBCD/XP/XP.BIN
+#map --mem /HBCD/XP/f6drivers.img (fd0)&&map --hook
+chainloader /HBCD/XP/XP.BIN
+#=====================================
+
+#=====================================
+title [U] BootCD.USB.Strelec.12(26.11.2012)_(WinPE)\n For test hardware; For recover data,system,mbr; For work with windows passwords; For work with HDD; Antivirus
+find --set-root /liveos/BootCD.USB.Strelec.12(26.11.2012).iso
+map /liveos/BootCD.USB.Strelec.12(26.11.2012).iso (0xff) || map --mem /liveos/BootCD.USB.Strelec.12(26.11.2012).iso (0xff)
+map --hook 
+chainloader (0xff)
+root (0xff)
+#=====================================
+title [G] Boot USB Sergei Strelec 2014 v.6.9 (x86_x64) (Windows 8 PE) \n
+find --set-root --ignore-floppies --ignore-cd /SSTR/bootmgr 
+chainloader /SSTR/bootmgr
+#=====================================
+title ERD6.5x64_Windows 7 x64, Windows 2008 R2 Server x64
+set ISO=/%DIR%/ERDC/ERD65x64.iso || find --set-root --devices=hf %ISO%
+map %ISO% (0xff) || map --mem %ISO% (0xff)
+map --hook
+chainloader (0xff)
+root (0xff)
+
+title ERD6.5x86_Windows 7 x86, Windows 2008 R2 Server x86
+set ISO=/%DIR%/ERDC/ERD65x86.iso || find --set-root --devices=hf %ISO%
+map %ISO% (0xff) || map --mem %ISO% (0xff)
+map --hook
+chainloader (0xff)
+root (0xff)
+
+#=====================================
+title ActiveBootDisk9.0.0.ISO\n ACTIVE@ Partition Recovery, File Recovery, Hex Editor, Partition Manager, Disk Monitor
+ind --set-root /liveos/ActiveBootDisk9.0.0.ISO
+map /liveos/ActiveBootDisk9.0.0.ISO (hd32)
+map --hook
+chainloader (hd32)
+boot
+#=====================================
+#title Dr.Web LiveCD (Default) (Lin) del\n Graphic Mode
+#find --set-root /boot/vmlinuz
+#kernel /boot/vmlinuz ID=1Fykb6O11YlIiIs3 root=/dev/ram0 init=/linuxrc init_opts=4 quiet vga=791 splash=silent,theme:drweb CONSOLE=/dev/tty1
+#initrd /boot/initrd
+#=====================================
+#title Dr.Web LiveCD (Advanced) del\n Safe Mode or Snapshots
+#find --set-root /boot/vmlinuz
+#kernel /boot/vmlinuz ID=1Fykb6O11YlIiIs3 root=/dev/ram0 init=/linuxrc init_opts=3 quiet CONSOLE=/dev/tty1
+#initrd /boot/initrd
+#=====================================
+
+#=====================================
+
+
+
+title [P] <-- Previous Menu
+find --set-root /menu.lst
+configfile /menu.lst
