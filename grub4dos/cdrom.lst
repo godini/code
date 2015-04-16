@@ -1,0 +1,51 @@
+/boot/textfont /boot/8x16_866.psf
+	# Menu Autonumber
+write 0x8274 0x2001
+/grub4dos/hotkey
+#=====================================
+title Boot CD-ROM - (cd)
+chainloader (cd)
+rootnoverify (cd)  
+#=====================================
+title Boot CD-ROM - (cd0) alt
+cdrom --init
+map --hook
+chainloader (cd0)
+rootnoverify (cd0) 
+#=====================================
+title Boot from CD alt
+cdrom --init
+map --hook
+chainloader (cd0)
+#=====================================
+title Boot CD-ROM - alt
+root(cd0,0) 
+makeactive
+chainloader + 1
+boot
+#=====================================
+
+
+#=====================================
+title Boot from CD (bad)
+rootnoverify (/dev/scd0)
+chainloader +1
+#=====================================
+title CDROM
+root(hd0,0)
+kernel /grub4dos/memdisk.bin
+initrd /grub4dos/sbootmgr.dsk
+#=====================================
+
+title stop using CDROM
+map --unhook
+cdrom --stop
+#=====================================
+title [P] <-- Previous Menu
+find --set-root /menu.lst
+configfile /menu.lst
+
+
+#title Acronis True Image Echo Ent. Server 9.5.8.115 FULL RU UR 
+#kernel /Boot/Acronis/aties.krn vga=788 root=/dev/ram0 ramdisk_size=65535 init=acronis vga vesa mbrcrcs on quiet acpi=off noapic 
+#initrd /Boot/Acronis/aties.fs  
