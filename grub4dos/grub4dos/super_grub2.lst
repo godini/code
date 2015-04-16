@@ -1,0 +1,46 @@
+/grub4dos/8x16_866.psf
+/grub4dos/hotkey
+	# Menu Autonumber
+write 0x8274 0x2001
+set DIR=hdd
+
+title [P] <-- Previous Menu
+find --set-root /menu.lst
+configfile /menu.lst
+
+#=====================================
+title super_grub2_disk_hybrid_2.00s2-rc5
+find --set-root /grub4dos/super_grub2_disk_hybrid_2.00s2-rc5.iso
+map /grub4dos/super_grub2_disk_hybrid_2.00s2-rc5.iso (hd32)
+map --hook
+chainloader (hd32)
+boot
+#=====================================
+title super_grub2_disk_hybrid_2.01-rc3
+find --set-root /grub4dos/super_grub2_disk_hybrid_2.01-rc3.iso
+map /grub4dos/super_grub2_disk_hybrid_2.01-rc3.iso (hd32)
+map --hook
+chainloader (hd32)
+boot
+#=====================================
+title super_grub2_disk_i386_efi_2.00s2-rc5
+find --set-root /grub4dos/super_grub2_disk_i386_efi_2.00s2-rc5.iso
+map /grub4dos/super_grub2_disk_i386_efi_2.00s2-rc5.iso (hd32)
+map --hook
+chainloader (hd32)
+boot
+#=====================================
+title super_grub2_disk_x86_64_efi_2.00s2.iso
+find --set-root /grub4dos/super_grub2_disk_x86_64_efi_2.00s2.iso
+map /grub4dos/super_grub2_disk_x86_64_efi_2.00s2.iso (hd32)
+map --hook
+chainloader (hd32)
+boot
+#=====================================
+
+#=====================================
+
+#=====================================
+title [P] <-- Previous Menu
+find --set-root /menu.lst
+configfile /menu.lst  
