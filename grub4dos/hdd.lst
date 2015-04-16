@@ -1,0 +1,240 @@
+/grub4dos/8x16_866.psf
+/grub4dos/hotkey
+	# Menu Autonumber
+write 0x8274 0x2001
+set DIR=hdd
+
+title [P] <-- Previous Menu
+find --set-root /menu.lst
+configfile /menu.lst
+
+#=====================================
+title PartedMagic   ->
+find --set-root /efi/pmagic/grub.cfg
+configfile /efi/pmagic/grub.cfg
+#=====================================
+#title Acronis TrueImage Home 11.0 (8.059) \n Image disk, partitions
+#find --set-root /grub4dos/ima/ti11_krn.dat
+#kernel (hd0,0)/grub4dos/ima/ti11_krn.dat vga=788 ramdisk_size=28672 acpi=off quiet 
+#initrd (hd0,0)/grub4dos/ima/ti11_ram.dat
+#=====================================
+
+#=====================================
+#title Acronis Disk Director Advanced 11.0.12077
+#kernel /%DIR%/ADDA11/DAT3.DAT vga=791 quiet acpi=off noapic quiet
+#initrd /%DIR%/ADDA11/DAT2.DAT
+
+title Acronis_Disk_Director_Home12.0.3223_FinalISO_ru-RU
+set ISO=/%DIR%/AcronisDiskDirectorHome12.0.3223FinalISO_ru-RU.iso %ISO% > nul || find --set-root --devices=hf %ISO%
+map %ISO% (0xff) || map --mem %ISO% (0xff) || map --mem --heads=0 --sectors-per-track=0 %ISO% (0xff)
+map --hook
+chainloader (0xff)
+root (0xff)
+#=====================================
+
+#=====================================
+#title ACRONIS_TRUE_IMAGE_2012_6131
+#kernel /hdd/DAT3.DAT vga=791 quiet acpi=off noapic quiet
+i#nitrd /hdd/DAT2.DAT
+#=====================================
+#title ACRONIS_TRUE_IMAGE_2013
+#kernel /hdd/Acronis_True_Image_Home_2013/DAT3.DAT vga=791 quiet acpi=off noapic quiet
+#initrd /hdd/Acronis_True_Image_Home_2013/DAT2.DAT
+
+#title Acronis True Image Home 2013 Plus Pack 16.0.6528
+#kernel /%DIR%/ATIH2013/DAT3.DAT vga=791 quiet acpi=off noapic quiet
+#initrd /%DIR%/ATIH2013/DAT2.DAT
+
+
+title Acronis.True.Image.2014.Build.5560.Premium
+set ISO=/%DIR%/Acronis.True.Image.2014.Build.5560.Premium.Bootable.ISO-rG.iso %ISO% > nul || find --set-root --devices=hf %ISO%
+map %ISO% (0xff) || map --mem %ISO% (0xff) || map --mem --heads=0 --sectors-per-track=0 %ISO% (0xff)
+map --hook
+chainloader (0xff)
+root (0xff)
+#=====================================
+
+title UDaRKv1.2.4\n Universal Diagnostic and Repair Kit (UDaRK) Версия 1.2.4
+set ISO=/hdd/UDaRKv1.2.4.iso || find --set-root --devices=hf %ISO%
+map %ISO% (0xff) || map --mem %ISO% (0xff)
+map --hook
+chainloader (0xff)
+root (0xff)
+
+#=====================================
+title Norton GHost 2003\n Image disk, partitions
+map --mem /hdd/ghost.ima.gz (fd0)
+map --hook
+chainloader (fd0)+1
+rootnoverify (fd0)
+#=====================================
+title Symantec Norton Ghost 11.5
+map --mem /grub4dos/firadisk.IMA (fd0)
+map --mem /hdd/ghost.iso (0xFF)
+map (hd0) (hd1)
+map (hd1) (hd0)
+map --hook
+chainloader (0xFF)
+#=====================================
+title BootIt Next Generation 1.86\n Control disk, partitions, MBR
+find --set-root /hdd/bootng.ima.gz
+map --mem /hdd/bootng.ima.gz (fd0)
+map --hook
+chainloader (fd0)+1
+rootnoverify (fd0)
+#=====================================
+title Easyrecovery 6.20 pro\n Recovery Data
+find --set-root /hdd/easyrecovery6.20pro.iso
+map /hdd/easyrecovery6.20pro.iso (hd32)
+map --hook
+chainloader (hd32)
+boot
+#=====================================
+title Iolio DriveScrubber\n Full erase HDD
+find --set-root /hdd/DriveScrubber.ima.gz 
+map --mem /hdd/DriveScrubber.ima.gz (fd0)
+map --hook
+chainloader (fd0)+1
+rootnoverify (fd0)
+#=====================================
+title Darik's Boot and Nuke\n erase all data from the disk
+find --set-root /hdd/dban.img 
+kernel /grub4dos/memdisk 
+initrd /hdd/dban.img 
+boot
+#=====================================
+title Darik's Boot and Nuke 2.2.6 big\n erase all data from the disk
+find --set-root /hdd/dban-2.2.6_i586.iso 
+map /hdd/dban-2.2.6_i586.iso (hd32)
+map --hook
+chainloader (hd32)
+boot
+#=====================================
+title HDShredder V3.8.1 (Free Edition)\n Wipes hard disks and other storage media. Supports IDE/ATA/SATA/SATA II/\n eSATA(AHCI)/USB 1.1(UHCI,OHCI)/USB 2.0(EHCI)/CF via IDE/Fireware(OHCI)/SCSI.\n Free Edition erases whole drive only (no partition-level support). Erase speed\n is limited to 6 GB/min, and erasure method is limited to the default.
+map --mem /hdd/hdshredder.img.gz (fd0)
+map --hook
+chainloader (fd0)+1
+rootnoverify (fd0)
+#=====================================
+title PTS DiskEditor V1.04\n Allows viewing and editing of fixed disks only. Supports both FAT16 and FAT32.\n Includes block copy-and-paste, undo, search for HEX/ASCII etc.
+map --mem /hdd/ptsdedit.img.gz (fd0)
+map --hook
+chainloader (fd0)+1
+rootnoverify (fd0)
+#=====================================
+title HDAT2 V4.5.3\n Diagnostic tool for ATA/ATAPI/SATA (SATA with NCQ) and SCSI/USB devices.\n Performs both drive and filesystem level testing. This includes testing and\n repair of bad sectors, checking of MBR, directories etc (FAT12/16/32\n partitions) as well as checking/removal of bad sectors flags in FAT table.
+map --mem /hdd/hdat2-453.img.gz (fd0)
+map --hook
+chainloader (fd0)+1
+rootnoverify (fd0)
+#=====================================
+title HDAT2 V4.8.1\n Latest version of HDAT2, but device-level testing is disabled. This issue is\n planned to be resolved in V4.9. In the mean time, use V4.5.3 for device-level\n testing.
+map --mem /hdd/hdat2.img.gz (fd0)
+map --hook
+chainloader (fd0)+1
+rootnoverify (fd0)
+#=====================================
+title PowerMax V4.23 (Maxtor/Quantum)\n Perform diagnostic read/write verifications on Maxtor/Quantum hard drives.\n Effective on all ATA (IDE) hard drives with a capacity >= 500 MB. This is the\n last version before Maxtor was acquired by Seagate.
+map --mem /hdd/powmx423.img.gz (fd0)
+map --hook
+chainloader (fd0)+1
+rootnoverify (fd0)
+#=====================================
+title ActiveBootDisk9.0.0.ISO\n ACTIVE@ Partition Recovery, File Recovery, Hex Editor, Partition Manager, Disk Monitor
+ind --set-root /liveos/ActiveBootDisk9.0.0.ISO
+map /liveos/ActiveBootDisk9.0.0.ISO (hd32)
+map --hook
+chainloader (hd32)
+boot
+#=====================================
+title Active@_Partition_Recovery_v3.0(DOS)
+find --set-root /hdd/Active@_Partition_Recovery_v3_dos.ISO
+map --mem /hdd/Active@_Partition_Recovery_v3_dos.ISO (fd0)
+map --hook
+chainloader (fd0)+1
+rootnoverify (fd0)
+#=====================================
+title Data Lifeguard Diagnostic_WD_504fCD\n only for Western Digital with WD HDD
+find --set-root /hdd/Data_Lifeguard_Diagnostic_WD_504fCD.iso
+map --mem /hdd/Data_Lifeguard_Diagnostic_WD_504fCD.iso (fd0)
+map --hook
+chainloader (fd0)+1
+rootnoverify (fd0)
+#=====================================
+title DIY_DataRecovery_MBRtool.iso\n for work with MBR
+find --set-root /hdd/DIY_DataRecovery_MBRtool.iso
+map --mem /hdd/DIY_DataRecovery_MBRtool.iso (fd0)
+map --hook
+chainloader (fd0)+1
+rootnoverify (fd0)
+#=====================================
+#=====================================
+#=====================================
+#=====================================
+title ====== DOS ====== \n
+root ()
+#=====================================
+title HBCD15.2rus DOS\nRUN HBCD Dos
+find --set-root /HBCD/Dos/hiren.ima
+map --read-only /HBCD/Dos/hiren.ima (fd0) || map --mem /HBCD/Dos/hiren.ima (fd0)
+map --hook
+chainloader (fd0)+1
+rootnoverify (fd0)
+map --floppies=1
+
+title HBCD15.2rus DOS Alternative\nRUN HBCD Dos memdisk
+find --set-root /HBCD/Dos/hiren.ima
+kernel /HBCD/Boot/memdisk
+initrd /HBCD/Dos/hiren.ima
+#=====================================
+title Dos Programs HBCD15.2 \nRun Dos Programs, esli chto ne rabotaet naiti eto cherez vc.exe
+set dos=/HBCD/Dos/dos.gz
+find --set-root /HBCD/Boot/dos.img && set dos=/HBCD/Boot/dos.img
+# to make big floppy image of all the dos programs (Useful when booted from NTFS usb drive) open HBCD\DOS\dosimg.cmd
+find --set-root %dos%
+map --mem %dos% (fd0)
+map --hook
+chainloader (fd0)+1
+rootnoverify (fd0)
+map --floppies=1
+
+title Dos Programs HBCD15.2 (Alternative Boot Method)\nUsing Memdisk,Run Dos Programs, esli chto ne rabotaet naiti eto cherez vc.exe
+set dos=/HBCD/Dos/dos.gz
+find --set-root /HBCD/Boot/dos.img && set dos=/HBCD/Boot/dos.img
+find --set-root %dos%
+kernel /HBCD/Boot/memdisk floppy
+initrd %dos%
+
+title Dos Programs HBCD15.2 (Alternative Boot Method 2)\nUsing ISO image, ୠ⨢맠⮤ vc.exe
+map /HBCD/Dos/HBCD_15.2.iso (0xff) || map --mem /HBCD/Dos/HBCD_15.2.iso (0xff)
+map --hook 
+chainloader (0xff)
+root (0xff)
+boot
+#=====================================
+title UBCD FreeDOS programs\n Ultimate Boot CD based on ver. 5.1.1\nᣠ ᤡ㭡 ⢠᢭묨 ⣠, ᫨ ઠ⬠஡㪠 禠 - UMBPCI(optimal)
+map /ubcd/UBCD_FreeDOS_on_ver_5.iso (0xff)
+map --hook 
+chainloader (0xff)
+root (0xff)
+boot
+#=====================================
+title hdd_Diagnosis ->
+find --set-root /ubcd/menus/hdd/diag.lst
+configfile /ubcd/menus/hdd/diag.lst
+
+title Boot Management ->
+find --set-root /ubcd/menus/hdd/bootmgmt.lst
+configfile /ubcd/menus/hdd/bootmgmt.lst
+
+title Cloning ->
+find --set-root /ubcd/menus/hdd/cloning.lst
+configfile /ubcd/menus/hdd/cloning.lst
+#=====================================
+title [P] <-- Previous Menu
+find --set-root /menu.lst
+configfile /menu.lst
+
+#title Acronis True Image Echo Ent. Server 9.5.8.115 FULL RU UR 
+#kernel /Boot/Acronis/aties.krn vga=788 root=/dev/ram0 ramdisk_size=65535 init=acronis vga vesa mbrcrcs on quiet acpi=off noapic 
+#initrd /Boot/Acronis/aties.fs  
