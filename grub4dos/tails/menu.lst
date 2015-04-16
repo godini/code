@@ -1,0 +1,43 @@
+/boot/textfont /boot/8x16_866.psf
+	# Menu Autonumber
+#write 0x8274 0x2001
+set DIR=tails
+#%DIR%
+#=====================================
+title <- 0 - Previous Menu
+find --set-root /menu.lst
+configfile /menu.lst
+#=====================================
+title tails-i386-1.3\nREAD /tails/tails_key.txt and KEY /tails/tails-signing_Tails.key
+kernel /%DIR%/vmlinuz boot=live config live-media=removable apparmor=1 security=apparmor nopersistent noprompt timezone=Etc/UTC block.events_dfl_poll_msecs=1000 splash noautologin module=Tails live-media-path=/%DIR%/ quiet
+initrd /%DIR%/initrd.img
+#=====================================
+title tails-i386-1.3 amd64\nREAD /tails/tails_key.txt and KEY /tails/tails-signing_Tails.key
+kernel /%DIR%/vmlinuz2 boot=live config live-media=removable apparmor=1 security=apparmor nopersistent noprompt timezone=Etc/UTC block.events_dfl_poll_msecs=1000 splash noautologin module=Tails live-media-path=/%DIR%/ quiet
+initrd /%DIR%/initrd2.img
+#=====================================
+title tails-i386-1.3 (failsafe)\nREAD /tails/tails_key.txt and KEY /tails/tails-signing_Tails.key
+kernel /%DIR%/vmlinuz boot=live config live-media=removable apparmor=1 security=apparmor nopersistent noprompt timezone=Etc/UTC block.events_dfl_poll_msecs=1000 splash noautologin module=Tails noapic noapm nodma nomce nolapic nomodeset nosmp vga=normal live-media-path=/%DIR%/ quiet 
+initrd /%DIR%/initrd.img
+#=====================================
+title tails-i386-1.3 amd64 (failsafe)\nREAD /tails/tails_key.txt and KEY /tails/tails-signing_Tails.key
+kernel /%DIR%/vmlinuz2 boot=live config live-media=removable apparmor=1 security=apparmor nopersistent noprompt timezone=Etc/UTC block.events_dfl_poll_msecs=1000 splash noautologin module=Tails noapic noapm nodma nomce nolapic nomodeset nosmp vga=normal live-media-path=/%DIR%/ quiet 
+initrd /%DIR%/initrd2.img
+#=====================================
+title tails-i386-1.3 amd64\nREAD /tails/tails_key.txt and KEY /tails/tails-signing_Tails.key
+kernel /%DIR%/vmlinuz boot=live config live-media=removable apparmor=1 security=apparmor nopersistent noprompt timezone=Etc/UTC block.events_dfl_poll_msecs=1000 splash noautologin module=Tails live-media-path=/%DIR%/ quiet 
+initrd /%DIR%/initrd.img
+#=====================================
+
+#=====================================
+
+#=====================================
+#=====================================
+
+#=====================================
+
+
+
+title <- Previous Menu
+find --set-root /menu.lst
+configfile /menu.lst
