@@ -1,0 +1,174 @@
+﻿##debug 0
+default 0
+timeout 5
+#if exist /grldr && checkrange 2,3 && timeout 0
+checkrange 20111129:-1 read 0x8278  > nul && timeout 5
+checkrange 20140117:-1 read 0x8278  > nul && timeout -1  && default 4
+
+#hiddenflag --set (hdx,y)
+#hiddenflag --clear (hdx,y)
+	# Menu Autonumber
+#checkrange 20140117:-1 read 0x8278  > nul && write 0x8274 0x2001
+write 0x8274 0x2001
+#checkrange 0x21 read 0x8280 && pxe keep
+	#0=Первый пункт меню, default 1=Второй пункт меню, и.т.д
+	#gfxmenu (hd0,0)/grub4dos/message_en
+	#/BOOT/unifont/unifont --all-font /BOOT/FONTS/CONSOLA_U16.bin
+	#/grub4dos/8x16_866.psf
+  ## run the hotkey command
+/grub4dos/hotkey
+/grub4dos/fat
+#pause --wait=2
+#=====================================
+#write (md)0x220+1 !BAT\necho -n -P:0000 $[0107] Made by GoDini \0 && initscript (md)0x220+1
+color green/black yellow/light-blue red/black blue/black
+	#color a/b c/d a=это текст, b=общий фон, c=цвет текста выбранного пункта, d=цвет курсора
+	#Цвет b и d должен быть одним из перечисленных - black, blue, green, cyan, red, magenta, brown, light-gray 
+	#Цвет a и c должен быть одним из перецисленных - black, blue, green, cyan, red, magenta, brown, light-gray, dark-gray, light-blue, light-green, light-cyan, light-red, light-magenta, yellow and white
+	#потом цвет шрифта и фона для помощи
+	#а это тоже самое для заголовков
+#=====================================
+	#splashimage=(hd0,0)/splash.xpm.gz 
+	#foreground=RRGGBB 
+	#background=RRGGBB
+	#Фоновое изображение (splash) должно быть в формате .xpm (каторое может быть задавлено gzip-ом),иметь размер изображения 640x480 пикселей и максимум 14 цветов
+#=====================================
+title grub4dos-0.4.6a-2014-01-17
+checkrange 20111129:-1 read 0x8278 > nul || pause --wait=3 echo && Please use grub4dos-0.4.6a-2014-01-17 or later! && exit 1
+chainloader /grldrnew
+#=====================================
+title [M] Start PLoP boot manager (For USB 2.0)
+kernel /grub4dos/plpbt.bin
+#=====================================
+	#title CommandLine GRUB
+	#commandline
+#=====================================
+#title GRUB2_1.99
+#find --set-root /grub4dos/super_grub2_disk_hybrid_1.99b1.iso
+#map /grub4dos/super_grub2_disk_hybrid_1.99b1.iso (hd32)
+#map --hook
+#chainloader (hd32)
+#boot
+#=====================================
+#=====================================
+title [G] super_grub2_disk_hybrid_2.01-rc3
+find --set-root /grub4dos/super_grub2.lst
+configfile /grub4dos/super_grub2.lst
+#=====================================
+#title \n
+#root ()
+title [B] Boot from HDD	->
+find --set-root /from_hdd.lst
+configfile /from_hdd.lst
+#=====================================
+title [A] Autodetect_&_Other (NEED grub4dos-0.4.6a!!!!!)-> \n Для обнаружения установленной ОС, загрузки Linux и другое
+find --set-root /For_Lin_Othr.lst
+configfile /For_Lin_Othr.lst
+#==========================================
+#title Boot Linux with menu.lst already installed
+#find --set-root --ignore-floppies --ignore-cd /boot/grub/menu.lst
+#map (hd0) (hd1)
+#map (hd1) (hd0)
+#map --rehook
+#configfile /boot/grub/menu.lst
+
+title \n
+root
+
+#=====================================
+title [H] HDD Utills                ->\n Все что можно делать с НЖМД, если что нет смотри ниже
+#lock
+find --set-root /hdd.lst
+configfile /hdd.lst
+#=====================================
+title [T] Testing Computers         ->\n Memtest86+, GoldMemory Tester, Video Memory stress, Victoria, MHDD, HDD Regenerator, BadLba by Memphis, SeaToolsDOS220, IBM/Hitachi DriveFitnessTest и конфигурация ПК
+#lock
+find --set-root /test.lst
+configfile /test.lst
+#=====================================
+title [P] Password                  ->\n Подбор, обход, обнуление паролей
+#lock
+find --set-root /hack.lst
+configfile /hack.lst
+#=====================================
+title [O] Others Booting            ->\n Universal Boot Disk, gPXE, netboot, MS-DOS, Samboot Bootable Disk, 
+#lock
+find --set-root /othresb.lst
+configfile /othresb.lst
+#=====================================
+title [L] Live OS                   ->\n
+#lock
+find --set-root /liveos.lst
+configfile /liveos.lst
+#=====================================
+title [I] TEST                      -> \n Для тестов
+#lock
+find --set-root /ttt.lst
+configfile /ttt.lst
+#=====================================
+
+title \n
+root
+
+title [R] Reboot\n Ума нет жми резет
+echo $[0173] Rebooting in 2 seconds
+pause --wait=2
+reboot
+#=====================================
+title [S] Shutdown\n Выключить
+echo $[0173] Shutting down in 2 seconds
+pause --wait=2
+halt
+#=====================================
+title HELP\n пример использования и пояснения команд
+#lock
+find --set-root /help.lst
+configfile /help.lst
+#=====================================
+title CDROM\n Run from CDROM
+#lock
+find --set-root /cdrom.lst
+configfile /cdrom.lst
+#=====================================
+#title [N] Game snake
+title snake
+insmod /grub4dos/snake
+snake
+configfile /menu.lst
+#=====================================
+#Пример прямого маппинга 
+#title Boot  
+#map (hd0,0)/PE.ima (hd0) 	- что
+#map --hook 			- немедленно
+#chainloader (hd0)+1 		- какой сектор загр.
+#rootnoverify (hd0) 		- корневой без мантиров-ия
+#образ диска состоит из одного раздела (без MBR), тогда надо мапить его как флоппи.  (fd0)
+#boot
+
+#Пример Мапинг памяти 
+#find --set-root /win98.ima.gz  
+#map --mem /win98.ima.gz (fd0) 
+#map --hook  
+#root (fd0) 
+#chainloader(fd0)+1 
+#map --floppies=1 - указ. что один тока флопик 
+#boot 
+
+#или, а ядро memdisk (часть пакета syslinux) поддерживает .zip формат 
+#find --set-root /memdisk.gz
+#kernel /memdisk.gz
+#initrd /win98.ima.gz
+#boot
+
+#Некоторые CD-ROM (ISO9660) образы могут мапиться как устройство (hd32), 
+#map (device)/path/file.iso (hd32)
+#map --hook 
+#root (hd32)
+#chainloader (hd32)  - это можно заменить командой chainloader ()  [enter], если корневое устройство назначенно предидущей командой. 
+#boot
+#--------------------------------------------------
+#title Recovery console
+#map --mem /grub4dos/firadisk.ima (fd0)
+#map --mem /grub4dos/iso/rc.iso (hd32)
+#map --hook
+#chainloader (hd32)
