@@ -1,0 +1,353 @@
+default 1
+timeout 40
+	# Menu Autonumber
+write 0x8274 0x2001
+	#0=Первый пункт меню, default 1=Второй пункт меню, и.т.д
+	#gfxmenu (hd0,0)/grub4dos/message_en
+	#/BOOT/unifont/unifont --all-font /BOOT/FONTS/CONSOLA_U16.bin
+#/grub4dos/8x16_866.psf
+#=====================================
+color green/black yellow/light-blue red/black blue/black
+#==========================================
+iftitle [find --ignore-floppies --ignore-cd /etc/fstab || find --ignore-floppies --ignore-cd /bin/bash || find --ignore-floppies --ignore-cd /etc/inittab || find --ignore-floppies --ignore-cd /etc/shadow || find --ignore-floppies --ignore-cd /vmlinuz] Found Traces of Linux\n Проверка идет по файлам /etc/fstab, /bin/bash, /etc/inittab, /etc/shadow, /vmlinuz
+configfile /For_Lin_Othr.lst
+#=====================================
+iftitle [find --ignore-floppies --ignore-cd /ntldr] Boot Windows NT/2K/XP already installed\n
+find --set-root --ignore-floppies --ignore-cd /ntldr
+map (hd0) (hd1)
+map (hd1) (hd0)
+map --rehook
+find --set-root --ignore-floppies --ignore-cd /ntldr
+chainloader /ntldr
+#=====================================
+iftitle [find --ignore-floppies --ignore-cd /bootmgr] Boot Windows Vista/7/2008 already installed\n
+find --set-root --ignore-floppies --ignore-cd /bootmgr
+map (hd0) (hd1)
+map (hd1) (hd0)
+map --rehook
+find --set-root --ignore-floppies --ignore-cd /bootmgr
+chainloader /bootmgr
+#=====================================
+iftitle [find --ignore-floppies --ignore-cd /bootmgr || find --ignore-floppies --ignore-cd /ntldr] Boot Windows XP/Vista/7/2008 already installed\n  Search and boot NT/2K/XP/Vista/7/2008
+find --set-root --ignore-floppies --ignore-cd /bootmgr || find --set-root --ignore-floppies --ignore-cd /ntldr
+map (hd0) (hd1)
+map (hd1) (hd0)
+map --rehook
+find --set-root --ignore-floppies --ignore-cd /bootmgr || find --set-root --ignore-floppies --ignore-cd /ntldr
+chainloader /bootmgr || chainloader /ntldr
+#=====================================
+
+title Find_and_Load_Linux\n Только Lilo, GRUB
+checkrange 20111129:-1 read 0x8278 || pause --wait=3 echo && Please use grub4dos-0.4.5c-2012-02-01 or later! && exit 1
+	##check version of grub4dos
+errorcheck off 
+clear
+	## ignore errors in case no hd
+find +1
+	## show all disks and partitions
+errorcheck on
+	## don't ignore errors now
+echo
+set HD=0
+set BC=0
+set ASK=0
+set ASK2=0
+set PTN=@
+set KRN=@
+set IMG=@
+set BT=@
+echo Exit -> Enter or 0
+set /p HD=Which hard disk do you want to boot from hd(X,*)  X=(1 - 9): 
+set f=0
+if "%HD%"=="1" set f=1
+if "%HD%"=="2" set f=1
+if "%HD%"=="3" set f=1
+if "%HD%"=="4" set f=1
+if "%HD%"=="5" set f=1
+if "%HD%"=="6" set f=1
+if "%HD%"=="7" set f=1
+if "%HD%"=="8" set f=1
+if "%HD%"=="9" set f=1
+if "%HD%"=="0" exit
+if "%f%"=="0" exit
+	##if %f%@==@ exit
+clear
+errorcheck off 
+	## ignore errors in case no hd
+echo 
+geometry (hd%HD%) 
+	## show hdX partitions
+errorcheck on 
+	## don't ignore errors now
+echo
+echo 0x82 = Swap
+echo 0x1B,0x1C = HIDDEN FAT32
+echo 0x17 = HIDDEN NTFS
+echo 0x27 = Win PE HIDDEN or PQService (ALT+F10)
+echo 0x12 = HIDDEN, Configuration/diagnostic partition
+echo 0x14,0x16,0x17,0x1E = HIDDEN
+echo 0xC2,0x93 = HIDDEN Linux
+echo 0xC2 = HIDDEN Swap
+echo
+echo Exit -> Enter
+set /p PTN=Which partition do you want to boot from on (hd%HD% , 0 - 9): 
+set f=0
+if "%PTN%"=="0" set f=1
+if "%PTN%"=="1" set f=1
+if "%PTN%"=="2" set f=1
+if "%PTN%"=="3" set f=1
+if "%PTN%"=="4" set f=1
+if "%PTN%"=="5" set f=1
+if "%PTN%"=="6" set f=1
+if "%PTN%"=="7" set f=1
+if "%PTN%"=="8" set f=1
+if "%PTN%"=="9" set f=1
+if "%f%"=="0" exit
+if "%PTN%"=="@" exit
+clear
+echo
+root (hd%HD%,%PTN%)
+echo
+set /p BT=Kernel in /boot/ ? Yes, press 1, or in /, press 0:
+set f=0
+if "%BT%"=="0" set f=1
+if "%BT%"=="1" set f=1
+if "%f%"=="0" exit
+if "%BT%"=="@" exit
+echo
+	## сделали его корнем
+if "%BT%"=="1" echo Browse (hd%HD%,%PTN%)/boot && echo  && ls /boot/
+if "%BT%"=="0" echo Browse (hd%HD%,%PTN%)/ && echo  && ls /
+echo
+echo
+set /p ASK=All right? Yes, press 1, but No, press Enter or 0: 
+set f=0
+if "%ASK%"=="1" set f=1
+if "%ASK%"=="0" exit
+if "%f%"=="0" exit
+	## подтверждение по выводу содержимого что правильно выбрал диск и раздел
+echo
+echo 
+set /p ASK2=Do you browse boot config? Yes, press 1: 
+if "%ASK2%"=="1" && echo && echo Exit, press Enter; && echo Lilo, press 1; && set /p BC=GRUB, press 2: 
+set GR=0
+set GRB=0
+if "%BC%"=="1" cat /etc/lilo.conf
+if "%BC%"=="2" set GR=1
+##if "%GR%"=="1" set /A BC=%BC% + %GR%
+if NOT exist /boot/grub/grub.conf set BC=0
+if NOT exist /boot/grub/grub.cfg set BC=0
+if NOT exist /boot/grub/menu.lst set BC=0
+if NOT exist /grub/grub.conf set BC=0
+if NOT exist /grub/grub.cfg set BC=0
+if NOT exist /grub/menu.lst set BC=0
+if exist /boot/grub/grub.conf set BC=2 && set GRB=GRUB
+if exist /boot/grub/grub.cfg set BC=3 && set GRB=GRUB2
+if exist /boot/grub/menu.lst set BC=4 && set GRB=GRUB
+if exist /grub/grub.conf set BC=22 && set GRB=GRUB
+if exist /grub/grub.cfg set BC=33 && set GRB=GRUB2
+if exist /grub/menu.lst set BC=44 && set GRB=GRUB
+if "%GR%"=="0" set BC=0
+if "%BC%"=="4" cat /boot/grub/menu.lst
+if "%BC%"=="44" cat /grub/menu.lst
+if "%BC%"=="2" cat /boot/grub/grub.conf
+if "%BC%"=="22" cat /grub/grub.conf
+if "%BC%"=="3" cat /boot/grub/grub.cfg
+if "%BC%"=="33" cat /grub/grub.cfg
+clear
+echo
+if "%BT%"=="1" echo Browse (hd%HD%,%PTN%)/boot && ls /boot/
+if "%BT%"=="0" echo Browse (hd%HD%,%PTN%)/ &&  ls /
+echo
+#if "%BT%"=="1" ls /boot/
+#if "%BT%"=="0" ls /
+echo
+echo Exit -> Enter
+echo Input kernel name and his parameters (root=/dev/... init=/bin/bash single):
+if NOT "%GRB%"=="0" echo current GRUB = %GRB%
+if NOT "%GRB%"=="0" echo If GRUB, (hd0,0) - this first disk & first partition = sda1 && echo _______(hd1,1) - this second disk & second partition = sdb2
+if NOT "%GRB%"=="0" echo REMEMBER!!!Now your flash or cd=(hd0,0),you must write (hd%HD%-1,%PTN%-1)
+if NOT "%GRB%"=="0" echo If GRUB2, Now your flash or cd=(hd0,0),you must write (hd%HD%-1,%PTN%)
+if NOT "%GRB%"=="0" echo [MBR(hd0,msdos1)][GPT(hd0,gpt1)]-this first disk & first partition=sda1 && echo [MBR(hd1,msdos2)][GPT(hd1,gpt2)]-this second disk & second partition=sdb2 && echo
+set /p KRN=>
+if "%KRN%"=="@" exit
+echo
+echo kernel=%KRN%
+##if NOT exist /boot/%KRN% exit
+if "%BT%"=="1" kernel /boot/%KRN%
+if "%BT%"=="0" kernel /%KRN%
+echo
+	##ввели ядро
+clear
+if "%BT%"=="1" echo kernel=/boot/%KRN%
+if "%BT%"=="0" echo kernel=/%KRN%
+echo
+if "%BT%"=="1" ls /boot/
+if "%BT%"=="0" ls /
+echo
+echo Exit -> Enter
+echo Input initrd name: 
+set /p IMG=>
+if "%IMG%"=="@" exit
+if "%BT%"=="1" initrd /boot/%IMG%
+if "%BT%"=="0" initrd /%IMG%
+boot
+#==========================================
+title List partitions\n max 4 disks
+clear
+cat (hd0,0)+1 > (md)800+1 && echo (hd0,0) && geometry (hd0,0) && echo ----------------------------
+cat (hd1,0)+1 > (md)800+1 && echo (hd1,0) && geometry (hd1,0) && echo ----------------------------
+cat (hd2,0)+1 > (md)800+1 && echo (hd2,0) && geometry (hd2,0) && echo ----------------------------
+cat (hd3,0)+1 > (md)800+1 && echo (hd3,0) && geometry (hd3,0) && echo ----------------------------
+cat (hd4,0)+1 > (md)800+1 && echo (hd4,0) && geometry (hd4,0) && echo ----------------------------
+echo
+echo 0x82 = Swap
+echo 0x1B,0x1C = HIDDEN FAT32
+echo 0x17 = HIDDEN NTFS
+echo 0x27 = Win PE HIDDEN or PQService (ALT+F10)
+echo 0x12 = HIDDEN, Configuration/diagnostic partition
+echo 0x14,0x16,0x17,0x1E = HIDDEN
+echo 0xC2,0x93 = HIDDEN Linux
+echo 0xC2 = HIDDEN Swap
+echo
+pause --wait=60 Please check available partitions...
+configfile (bd)/For_Lin_Othr.lst
+#==========================================
+title Browse root partitions\n Просмотр содержимого корня
+checkrange 20111129:-1 read 0x8278 || pause --wait=3 echo && Please use grub4dos-0.4.5c-2012-02-01 or later! && exit 1
+	##check version of grub4dos
+errorcheck off 
+clear
+	## ignore errors in case no hd
+find +1
+	## show all disks and partitions
+errorcheck on
+	## don't ignore errors now
+echo
+echo Exit -> Enter or 0
+set /p HD=Which hard disk do you want to boot from hd(X,*)  X=(1 - 9): 
+set q=0
+if "%HD%"=="1" set q=1
+if "%HD%"=="2" set q=1
+if "%HD%"=="3" set q=1
+if "%HD%"=="4" set q=1
+if "%HD%"=="5" set q=1
+if "%HD%"=="6" set q=1
+if "%HD%"=="7" set q=1
+if "%HD%"=="8" set q=1
+if "%HD%"=="9" set q=1
+if "%HD%"=="0" exit
+if "%f%"=="0" exit
+clear
+cat (hd%HD%,0)+1 > (md)800+1 && echo (hd%HD%,0) && ls (hd%HD%,0)/ && echo && echo ----------------------------
+cat (hd%HD%,1)+1 > (md)800+1 && echo (hd%HD%,1) && ls (hd%HD%,1)/ && echo && echo ----------------------------
+cat (hd%HD%,2)+1 > (md)800+1 && echo (hd%HD%,2) && ls (hd%HD%,2)/ && echo && echo ----------------------------
+cat (hd%HD%,3)+1 > (md)800+1 && echo (hd%HD%,3) && ls (hd%HD%,3)/ && echo && echo ----------------------------
+cat (hd%HD%,4)+1 > (md)800+1 && echo (hd%HD%,4) && ls (hd%HD%,4)/ && echo && echo ----------------------------
+cat (hd%HD%,5)+1 > (md)800+1 && echo (hd%HD%,5) && ls (hd%HD%,5)/ && echo && echo ----------------------------
+cat (hd%HD%,6)+1 > (md)800+1 && echo (hd%HD%,6) && ls (hd%HD%,6)/ && echo && echo ----------------------------
+cat (hd%HD%,7)+1 > (md)800+1 && echo (hd%HD%,7) && ls (hd%HD%,7)/ && echo && echo ----------------------------
+cat (hd%HD%,8)+1 > (md)800+1 && echo (hd%HD%,8) && ls (hd%HD%,8)/ && echo && echo ----------------------------
+cat (hd%HD%,9)+1 > (md)800+1 && echo (hd%HD%,9) && ls (hd%HD%,9)/ && echo && echo ----------------------------
+echo
+pause --wait=60 Please check available partitions...
+configfile (bd)/For_Lin_Othr.lst
+#==========================================
+title \n
+root
+#=====================================
+iftitle [find --ignore-floppies --ignore-cd /etc/lilo.conf] Have Lilo\n Проверка идет по файлу /etc/lilo.conf\n Хочешь посмотреть где, жми
+find --ignore-floppies --ignore-cd /etc/lilo.conf
+echo
+pause --wait=60 Exit press any key
+configfile (bd)/For_Lin_Othr.lst
+#=====================================
+iftitle [find --ignore-floppies --ignore-cd /boot/grub/grub.cfg || find --ignore-floppies --ignore-cd /grub/grub.cfg || find --ignore-floppies --ignore-cd /etc/default/grub] Have GRUB2\n Проверка идет по файлу /boot/grub/grub.cfg, /grub/grub.cfg, /etc/default/grub\n Хочешь посмотреть где, жми
+errorcheck off
+hide (hd0,0)
+find --ignore-floppies --ignore-cd /boot/grub/grub.cfg
+find --ignore-floppies --ignore-cd /grub/grub.cfg
+find --ignore-floppies --ignore-cd /etc/default/grub
+unhide (hd0,0)
+errorcheck on
+echo
+pause --wait=60 Exit press any key
+configfile (bd)/For_Lin_Othr.lst
+#=====================================
+iftitle [find --ignore-floppies --ignore-cd /boot/grub/core.img || find --ignore-floppies --ignore-cd /grub/core.img] Try run find`s GRUB2\n /boot/grub/core.img
+errorcheck off
+find --set-root --ignore-floppies --ignore-cd /boot/grub/core.img
+find --set-root --ignore-floppies --ignore-cd /grub/core.img
+errorcheck on
+if exist /boot/grub/core.img kernel /boot/grub/core.img && boot
+if exist /grub/core.img kernel /grub/core.img && boot
+#find --set-root --ignore-floppies --ignore-cd /grldr
+configfile (bd)/For_Lin_Othr.lst
+#=====================================
+iftitle [find --ignore-floppies --ignore-cd /boot/grub/menu.lst || find --ignore-floppies --ignore-cd /grub/menu.lst || find --ignore-floppies --ignore-cd /boot/grub/grub.conf || find --ignore-floppies --ignore-cd /grub/grub.conf] Have GRUB\n Проверка идет по файлу /boot/grub/menu.lst, /grub/menu.lst, /boot/grub/grub.conf, /grub/grub.conf\n Хочешь посмотреть где, жми
+errorcheck off
+find --ignore-floppies --ignore-cd /boot/grub/menu.lst
+find --ignore-floppies --ignore-cd /grub/menu.lst
+find --ignore-floppies --ignore-cd /boot/grub/grub.conf
+find --ignore-floppies --ignore-cd /grub/grub.conf
+errorcheck on
+configfile (bd)/For_Lin_Othr.lst
+#=====================================
+iftitle [find --ignore-floppies --ignore-cd /boot/grub/menu.lst || find --ignore-floppies --ignore-cd /grub/menu.lst || find --ignore-floppies --ignore-cd /boot/grub/grub.conf || find --ignore-floppies --ignore-cd /grub/grub.conf] Try run find`s GRUB\n
+errorcheck off
+find --set-root --ignore-floppies --ignore-cd /boot/grub/menu.lst
+find --set-root --ignore-floppies --ignore-cd /grub/menu.lst
+find --set-root --ignore-floppies --ignore-cd /boot/grub/grub.conf
+find --set-root --ignore-floppies --ignore-cd /grub/grub.conf
+errorcheck on
+##если найдет что то передать упр. ему
+if exist /boot/grub/grub.conf configfile /boot/grub/grub.conf
+if exist /grub/grub.conf configfile /grub/grub.conf
+if exist /boot/grub/menu.lst configfile /boot/grub/menu.lst
+if exist /grub/menu.lst configfile /grub/menu.lst
+find --set-root --ignore-floppies --ignore-cd /grldr
+configfile (bd)/For_Lin_Othr.lst
+#=====================================
+
+
+
+
+#=====================================
+iftitle [find --ignore-floppies --ignore-cd /etc/issue || find --ignore-floppies --ignore-cd /etc/issue.net || find --ignore-floppies --ignore-cd /etc/lsb-release] See type Linux\n роверка идет по файлу /etc/issue, /etc/issue.net, /etc/lsb-release
+errorcheck off
+find --set-root --ignore-floppies --ignore-cd /etc/issue
+if exist /etc/issue echo "etc/issue" && cat /etc/issue
+find --set-root --ignore-floppies --ignore-cd /etc/issue.net
+if exist /etc/issue.net echo "etc/issue.net" && cat /etc/issue.net
+find --set-root --ignore-floppies --ignore-cd /etc/lsb-release
+##если найдет что то передать упр. ему
+if exist /etc/lsb-release echo "etc/lsb-release" && cat /etc/lsb-release
+find --set-root --ignore-floppies --ignore-cd /etc/motd
+if exist /etc/motde echo "/etc/motd" && cat /etc/motd
+find --set-root --ignore-floppies --ignore-cd /grldr
+errorcheck on
+pause --wait=60 Exit press any key
+configfile (bd)/For_Lin_Othr.lst
+#=====================================
+title UUID disks
+errorcheck off
+uuid
+errorcheck on
+pause --wait=60 Exit press any key
+configfile (bd)/For_Lin_Othr.lst
+#=====================================
+#=====================================
+title systemrescuecd_auto-x86auto\n Detect partition where linux is installed and boot from it. You can use this to boot Linux if your boot loader (eg: Grub) is broken or has been removed by another OS.
+kernel /efi/sysrescue/rescue32 root=auto
+initrd /efi/sysrescue/initram.igz
+boot
+#=====================================
+title systemrescuecd_auto-x64-auto\n Detect partition where linux is installed and boot from it. You can use this to boot Linux if your boot loader (eg: Grub) is broken or has been removed by another OS.
+kernel /efi/sysrescue/rescue64 root=auto
+initrd /efi/sysrescue/initram.igz
+boot
+#=====================================
+title [P] <-- Previous Menu
+find --set-root /menu.lst
+configfile /menu.lst
+#=====================================
