@@ -76,7 +76,7 @@ map --hook
 chainloader (0xff)
 root (0xff)
 #=====================================
-title [G] Boot USB Sergei Strelec 2014 v.6.9 (x86_x64) (Windows 8 PE) \n
+title [G] Boot USB Sergei Strelec 2015 v.7.9 (x86_x64) (Windows 8 PE) \n
 find --set-root --ignore-floppies --ignore-cd /SSTR/bootmgr 
 chainloader /SSTR/bootmgr
 #=====================================
