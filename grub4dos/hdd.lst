@@ -41,9 +41,9 @@ i#nitrd /hdd/DAT2.DAT
 #kernel /hdd/Acronis_True_Image_Home_2013/DAT3.DAT vga=791 quiet acpi=off noapic quiet
 #initrd /hdd/Acronis_True_Image_Home_2013/DAT2.DAT
 
-#title Acronis True Image Home 2013 Plus Pack 16.0.6528
-#kernel /%DIR%/ATIH2013/DAT3.DAT vga=791 quiet acpi=off noapic quiet
-#initrd /%DIR%/ATIH2013/DAT2.DAT
+title Acronis True Image 2015.6525
+kernel /hdd/AcronisTrueImage2015/dat7.dat vga=791 quiet acpi=off noapic quiet
+initrd /hdd/AcronisTrueImage2015/dat6.dat
 
 
 title Acronis.True.Image.2014.Build.5560.Premium
@@ -52,6 +52,10 @@ map %ISO% (0xff) || map --mem %ISO% (0xff) || map --mem --heads=0 --sectors-per-
 map --hook
 chainloader (0xff)
 root (0xff)
+
+title Acronis Universal Restore
+kernel /hdd/AcronisTrueImage2015/dat3.dat vga=791 quiet acpi=off noapic quiet
+initrd /hdd/AcronisTrueImage2015/dat2.dat
 #=====================================
 
 title UDaRKv1.2.4\n Universal Diagnostic and Repair Kit (UDaRK) Версия 1.2.4
