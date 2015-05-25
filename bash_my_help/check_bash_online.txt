@@ -1,0 +1,3 @@
+http://www.shellcheck.net/#
+
+http://www.compileonline.com/execute_bash_online.php

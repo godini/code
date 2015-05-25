@@ -1,0 +1,77 @@
+$ rm -f my\:file\ name
+$ rm -f 'my file with white:spaces:and:colons'
+$ rm -f \(filename\)
+
+Имя файла начинается с дефиса
+$ rm -f ./-abc
+$ rm -f -- -abc
+
+Файлы с управляющим символом в названии
+$ rm -f $'any\nfile'
+$ rm -f $'any\bfile'
+
+
+$ rm -f any     # жмем CTRL+V, затем ESC
+$ rm -f any^[  # дописываем отсальные символы
+$ rm -f any^[file
+
+Удаление файлов с символами utf8
+$ ls -1
+朲晦
+朲晩
+朲晪
+$ rm -f 朲晪
+
+Автокомплит
+$ rm -f icantype_  # жмем TAB 
+$ rm -f icantype_��\ ������.jpg
+
+Удаляем файл через меню выбора
+$ select i in *; do rm -f $i; done
+1) file.zip  3) ??? ???.doc                5) 朲晩
+2) ?? ??.jpg                       4) 朲晦
+#? 2
+#? ^C
+
+Удаление по номеру inode
+$ ls -1 -i
+144368 ???.txt
+144363 ??.txt
+$ find . -inum 144368 -delete
+
+
+
+Удаление по hex-коду
+$ for i in *; do echo -n $i | xxd ; done
+0000000: face c0d0 32a4                           ....2.
+$ rm -f $'\xfa\xce\xc0\xd0\x32\xa4'
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

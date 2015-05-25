@@ -1,0 +1,154 @@
+#!/bin/sh
+
+SRC="/usr/home/dev/"
+    SITE="${SRC}_Web/"
+    PROJECT="${SRC}_Project/"
+
+# куда будем складывать бэкапы
+DST="/usr/home/share/BACKUP/"
+
+# реквизиты для Mysql
+SQLLOGIN="root"
+SQLPASS="TopSecretPassword"
+SQLHOST="localhost"
+
+/* --------------------------------------------------------------------------------------------------------- */
+# именовать файлы дампов и архивов будем по дате
+DATE=`date "+%Y.%m.%d_%H-%M-%S"`
+DSRC=""
+# переменная для сохранения выбранного типа бэкапа (база или сайт)
+backupType=0
+
+# вызываемая программа для создания диалога
+DIALOG=dialog
+# временный файл
+tempfile=`mktemp /tmp/bkp.XXXXXX`
+trap "rm -f $tempfile" 0 1 2 5 15
+
+# функция для вывода информационного окна
+InfoDialog() {
+    ${DIALOG} --msgbox "$1" 5 70
+}
+
+# упаковка файлов из выбранной директории
+BackupFiles() {
+    if [ ! -d ${2} ]; then
+        mkdir -p ${2}
+    fi
+    tar -c --gzip -f "${2}${DATE}.tar.gz" "${1}"
+    InfoDialog "OK -> ${2}${DATE}.tar.gz"
+}
+
+# сохранения дампа базы в файл
+BackupMySQL() {
+    case ${1} in
+        "All_Database")
+            mysqldump -R -E --triggers -u"${SQLLOGIN}" -p"${SQLPASS}" --all-databases > "${tempfile}"
+            ;;
+        "")
+            InfoDialog "Backup has been canceled"
+            exit
+            ;;
+        *)
+            mysqldump -R -E --triggers -u"${SQLLOGIN}" -p"${SQLPASS}" ${DBase} > "${tempfile}"
+            ;;
+    esac
+    cp "${tempfile}" "${DST}${1}-${DATE}.sql"
+    # компрессия gzip, отключено за ненадобностью — распаковывать неудобно
+    echo tar -c --gzip -f "${2}${DATE}.dump" "${tempfile}"
+    InfoDialog "OK -> ${2}${DATE}.dump"
+}
+
+# выбор базы данных из списка существующих на сервере
+ChooseDatabase() {
+    # получаем листинг баз
+    DBases=` echo "SHOW DATABASES" | mysql -u"${SQLLOGIN}" -p"${SQLPASS}" `
+    # хитро обеспечиваем опцию All_Database
+    List="All_${DBases}"
+    # выводим диалог выбора базы из списка
+    $DIALOG  --title "Please choose a Database " --tree "FS" "List of existing databases" 14 78 7 ${List} 2> ${tempfile}
+
+    case $? in
+    0)
+        # выбор сделан
+        DBase=`cat ${tempfile}`
+        BackupMySQL ${DBase}
+        ;;
+    1|255)
+        # диалог прерван (ескейп например)
+        InfoDialog "Backup has been canceled"
+        exit
+        ;;
+    esac
+}
+
+# выбор папки с сайтом (реализованвыбор нужного  из денвероподобной структуры папок с сайтами)
+ChooseDomain() {
+    Paths=`ls ${1}`
+    List=""
+    isEmpty=true
+    for dName in ${Paths}
+    do
+        # выводим только папки внутри которых есть корен сайта или поддомен www (структура реализована совсем как в денвере)
+        if [ -d "${1}${dName}/www" ] || [ -d "${1}${dName}/htdocs" ]; then
+            List="${List} ${dName}"
+            isEmpty=false
+        fi
+    done
+
+    # таким образом проверяем что выбран корень сайта и пора всетаки паковать его, иначе выводим список подпапок
+    if ${isEmpty}; then
+        Count=`echo ${SRC} | wc -c | tr -d ' '`
+        DSRC=`echo ${1} | awk "{ print substr($ 1, ${Count}) }"`
+        return 0;
+    fi
+
+    # собстно вывод список папок внутри выбранной
+    $DIALOG  --title "Please choose a path " --tree "FS" "List of existing domains" 14 78 7 ${List} 2> ${tempfile}
+
+    case $? in
+    0)
+        DName=`cat ${tempfile}`
+        ChooseDomain "${1}${DName}/"
+        ;;
+    1|255)
+        InfoDialog "Backup has been canceled"
+        exit
+        ;;
+    esac
+
+}
+
+ProcessBackup() {
+    case $1 in
+        Site)
+             ChooseDomain ${SITE}
+             BackupFiles "${SRC}${DSRC}" "${DST}${DSRC}"
+            ;;
+        MySQL)
+            ChooseDatabase
+            ;;
+        *)
+            ;;
+    esac
+}
+
+TypeDialog() {
+    ${DIALOG} --title "Choose backup type:" --menu "This is backup types" 12 50 4 \
+                                            "Site" "backup web-site" \
+                                            "MySQL" "Mysql database" 2> ${tempfile}
+
+    case $? in
+    0)
+        ProcessBackup `cat ${tempfile}`
+        TypeDialog
+        ;;
+    1|255)
+        InfoDialog "Backup has been canceled"
+        exit
+        ;;
+    esac
+
+}
+
+TypeDialog
