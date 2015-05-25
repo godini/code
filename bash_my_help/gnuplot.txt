@@ -1,0 +1,114 @@
+
+title "data"
+
+
+
+
+
+
+Далее выведем график в виде файла формата постскрипт (который можно скормить LaTeX)
+
+    set terminal postscript eps enhanced
+
+задаётся имя выводимого файла с графиком, имя в кавычках
+
+    set output "~/RMSresearch.ps"
+
+Ставим поддержку кириллицы, а то не увидим в подписях
+
+    set encoding koi8r
+
+Устанавливаем метки по осям, размер и тип шрифта: сейчас по оси Х
+
+    set xlabel "Параметр регуляризациии {/Symbol a}, 10^{-n}" font "Helvetica,18"
+
+Устанавливаем метки по осям, размер и тип шрифта: теперь по оси Y
+
+    set ylabel "Величина СКО, отн.ед" font "Helvetica,18"
+
+Устанавливаем предел значений по оси Y
+
+    set yrange [0:1]
+
+Задаём стиль линии (line1): сплошная прямая(lt - от linetype) с круглыми точками (pt - от pointstyle) типа 7
+
+    set style line 1 lt 1 pt 7
+
+Теперь, задав все параметры, строим график, беря данные из файла RMSresult (для примера), где мы берём только второй столбец. Легенду для данных второго столбца называем СКО (среднеквадратичное отклонение) и заставляем строить график, используя тип линии, который мы задали.
+
+    plot "~/RMSresult" using 2 title "СКО" with linespoints linestyle 1
+
+xтобы надписи не налезали друг на друга в легенде, требуется увеличить межстрочное расстояние. В данном примере оно увеличено на 30% при помощи команды
+
+set key spacing 1.3
+
+использовать подстрочное / надстрочное написание?
+Для этого следует ипользовать расширенный postscript-терминал, указав в скрипте построения графиков:Надстрочные символы пишутся как X^2, подстрочные Y_3. Если необходимо написать так несколько символов, следует использвать фигурные скобки: Z_{64}. При одновременном надстрочном и подстрочном индексе используйте Z@^2_{64}.
+
+set terminal postscript enhanced
+#sqrt(sin(x)) ti "sin^{1/2}(x)
+
+
+Интервал можно изменить при помощи команд set {x|y}label
+Например, это:смещает ось Х на высоту одной буквы вверх. Если задать положительное смещение по Y, подпись оси X налезает на содержимое графика, как показано на рисунках ниже.
+
+gnuplot> set xlabel "x" 0.0,1.0 
+
+При построении нескольких графиков нужно включить режим multi-plot, после чего будет возможно размещать несколько функций или графиков данных в одном окне.
+
+gnuplot> set multiplot
+multiplot> plot x
+multiplot> plot x*x
+multiplot> plot x*x*x
+multiplot> set nomultiplot
+
+Такое случается потому, что гнуплот определяет границы для каждого графика автоматически, что может привести к нежелательному результату. Следует задавать границы принудительно:
+
+    gnuplot> set xrange [-10:10]
+    gnuplot> set yrange [-10:10]
+
+подписи к осям на вложенном графике будут только мешать - отключаем их:
+
+    set noxlabel 
+    set noylabel 
+
+изменение поведения второй вертикальной оси y2range  в гнуплоте. Да-да, она не просто так отсвечивает в графике и её тоже можно использовать
+
+set y2range [60:100] 
+ set y2tics 5 
+
+ set y2label "Output disturbance"
+
+To set a label on a graph with a timeseries on the x axis, use, for example:
+This command applies to timeseries where data are composed of dates/times. It has no meaning unless the command ‘set xdata time‘ is given also. 
+            set timefmt "%d/%m/%y,%H:%M"
+
+Arbitrary labels can be placed on the plot using the ‘set label‘ command.
+set label {<tag>} {"<label text>"} {at <position>}
+                {left | center | right}
+                {norotate | rotate {by <degrees>}}
+                {font "<name>{,<size>}"}
+                {noenhanced}
+                {front | back}
+                {textcolor <colorspec>}
+                {point <pointstyle> | nopoint}
+                {offset <offset>}
+
+set label 1 "Default" at -4,4
+set label 2 "rotate left"   at 0,0 rotate left
+set label 3 "rotate right"  at 0.5,0 rotate right
+set label 4 "rotate center" at 1.0,0 rotate center
+set label 21 "  rotate by 45" at -3.0,0.0 rotate by 45 point ps 2
+set label 23 "  rotate by -30" at -3.0,0.0 rotate by -30 point ps 2
+set label 24 "  rotate by -60" at -3.0,0.0 rotate by -60 point ps 2
+
+
+
+
+
+
+
+
+
+
+

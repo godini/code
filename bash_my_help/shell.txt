@@ -1,0 +1,40 @@
+Login
+User can login locally into the console when in runlevel  # 3 or graphically when in runlevel  # 5 (the level numbers
+may differ depending on the distribution). In both cases you need to provide username and password. Bash uses the
+following initialization and start-up files:
+1. /etc/profile - The systemwide initialization file, executed for login shells.
+2. /etc/bash.bashrc - The systemwide per-interactive-shell startup file. This is a non-standard file which may not
+exist on your distribution. Even if it exists, it will not be sourced unless it is done explicitly in another start-up
+file.
+3. /etc/bash.logout - The systemwide login shell cleanup file, executed when a login shell exits.
+4. $HOME/.bash_profile - The personal initialization file, executed for login shells.
+5. $HOME/.bashrc - The individual per-interactive-shell startup file.
+6. $HOME/.bash_logout - The individual login shell cleanup file, executed when a login shell exits.
+7. $HOME/.inputrc - Individual readline initialization file.
+
+Login Shell
+Login shells are first shell started when you log in to the system. Login shells set environment which is exported to
+non-login shells. Login shell calls the following when a user logs in:
+• /etc/profile runs first when a user logs in runlevel # 3 (the level numbers may differ depending on the
+distribution).
+• /etc/profile.d
+• $HOME/.bash_profile, $HOME/.bash_login, and $HOME/.profile, runs second when a user logs in in that order.
+$HOME/.bash_profile calls $HOME/.bashrc, which calls /etc/bashrc (/etc/bash.bashrc).
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

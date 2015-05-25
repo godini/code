@@ -1,0 +1,258 @@
+Отладка скриптов Bash
+Отладка сразу всего скрипта
+
+Когда дела идут не так, как планировалось, необходимо определить, из-за чего в скрипте возникли проблемы. В Bash для отладки предоставляются широкие возможности. Наиболее распространенным способом является запуск подоболочки с параметром -x, благодаря которому весь скрипт будет запущен в отладочном режиме. После того, как для каждой команды будут выполнены все необходимые подстановки и замены, но перед тем, как команда будет выполнена, в стандартный выходной поток будет выдана трассировка команды и все ее аргументы.
+
+В результате скрипт commented-script1.sh будет запущен в отладочном режиме. Отметим еще раз, что добавленные комментарии не будут отображаться в выводе скрипта.
+
+willy:~/scripts> bash -x script1.sh
++ clear
+
++ echo 'The script starts now.'
+The script starts now.
++ echo 'Hi, willy!'
+Hi, willy!
++ echo
+
++ echo 'I will now fetch you a list of connected users:'
+I will now fetch you a list of connected users:
++ echo
+
++ w
+  4:50pm  up 18 days,  6:49,  4 users,  load average: 0.58, 0.62, 0.40
+
+USER     TTY      FROM              LOGIN@   IDLE   JCPU   PCPU  WHAT
+root     tty2     -                Sat 2pm  5:36m  0.24s  0.05s  -bash
+willy    :0       -                Sat 2pm   ?     0.00s   ?     -
+willy    pts/3    -                Sat 2pm 43:13  36.82s 36.82s  BitchX willy ir
+willy    pts/2    -                Sat 2pm 43:13   0.13s  0.06s  /usr/bin/screen
++ echo
+
++ echo 'I'\''m setting two variables now.'
+I'm setting two variables now.
++ COLOUR=black
++ VALUE=9
++ echo 'This is a string: '
+This is a string:
++ echo 'And this is a number: '
+And this is a number:
++ echo
+
++ echo 'I'\''m giving you back your prompt now.'
+I'm giving you back your prompt now.
++ echo
+В настоящее время есть полноценный отладчик для Bash, который доступен на SourceForge. Подобные отладочные средства есть в большинстве современных версий Bash, начиная с версий 3.x.
+
+Отладка скрипта по частям
+
+С помощью встроенной команды set, имеющейся в Bash, вы можете запускать в обычном режиме те части скрипта, относительно которых вы уверены, что они работают без ошибок, и отображать отладочную информацию только там, где есть подозрение на неправильную работу. Скажем, мы не уверены, что в примере commented-script1.sh будет делать команда w, поэтому мы можем окружить эту команду следующими отладочными командами:
+
+set -x                  # activate debugging from here
+w
+set +x                  # stop debugging from here
+Выдаваемая информация будет выглядеть следующим образом:
+
+willy: ~/scripts> script1.sh
+The script starts now.
+Hi, willy!
+
+I will now fetch you a list of connected users:
+
++ w
+  5:00pm  up 18 days,  7:00,  4 users,  load average: 0.79, 0.39, 0.33
+USER     TTY      FROM              LOGIN@   IDLE   JCPU   PCPU  WHAT
+root     tty2     -                Sat 2pm  5:47m  0.24s  0.05s  -bash
+willy    :0       -                Sat 2pm   ?     0.00s   ?     -
+willy    pts/3    -                Sat 2pm 54:02  36.88s 36.88s  BitchX willyke
+willy    pts/2    -                Sat 2pm 54:02   0.13s  0.06s  /usr/bin/screen
++ set +x
+
+I'm setting two variables now.
+This is a string:
+And this is a number:
+
+I'm giving you back your prompt now.
+
+willy: ~/scripts>
+В одном и том же скрипте вы можете включать и выключать отладочный режим столько раз, сколько это необходимо.
+
+В таблице ниже приводится обзор других полезных параметров Bash:
+
+Таблица 2.1. Обзор отладочных параметров
+
+Краткая нотация	Полная нотация	Результат
+set -f
+
+set -o noglob
+
+Отключается генерация имени файла с помощью метасимволов (подстановка).
+
+set -v
+
+set -o verbose
+
+Командная оболочка печатает входные строки сразу, как они считываются.
+
+set -x
+
+set -o xtrace
+
+Перед исполнением команды выдаются трассировочные данные.
+
+Символ "тире" используется для активации параметра командной оболочки, а символ "плюс" - для его деактивации. Не перепутайте это!
+
+В приведенном ниже примере мы продемонстрируем, как эти параметры используются в командной строке:
+
+willy:~/scripts> set -v
+
+willy:~/scripts> ls
+ls 
+commented-scripts.sh    script1.sh
+
+willy:~/scripts> set +v
+set +v
+
+willy:~/scripts> ls *
+commented-scripts.sh    script1.sh
+
+willy:~/scripts> set -f
+
+willy:~/scripts> ls *
+ls: *: No such file or directory
+
+willy:~/scripts> touch *
+
+willy:~/scripts> ls
+*   commented-scripts.sh    script1.sh
+
+willy:~/scripts> rm *
+
+willy:~/scripts> ls
+commented-scripts.sh    script1.sh
+Кроме того, эти режимы можно указать в самом скрипте, для этого добавьте соответствующие параметры в первую строку, в которой указывается командная оболочка. Параметры можно объединить, что является обычным приемом при использовании команд UNIX:
+
+#!/bin/bash -xv 
+Как только вы обнаружили ошибочный фрагмент в вашем скрипте, вы можете добавить инструкции echo перед каждой командой, в работе которой вы не уверены, и можете увидеть, где именно и почему что-то не работает. В примере скрипта commented-script1.sh, если считать, что проблемы возникают при отображении пользователей, это можно сделать, например, следующим образом:
+
+echo "debug message: now attempting to start w command"; w
+В более сложных скриптах инструкцию echo можно добавлять для отображения значений переменных на различных этапах работы скрипта, что может помочь в обнаружении проблемы:
+
+echo "Variable VARNAME is now set to $VARNAME."
+
+
+================================================================
+Метод #3 - Написать отладочную функцию DEBUG
+
+Добавьте переменную _DEBUG и присвойте ей значение on:
+
+_DEBUG="on"
+Затем добавьте следующую функцию в ваш скрипт:
+
+function DEBUG()
+
+{
+
+ [ "$_DEBUG" == "on" ] &&  $@ || :
+
+}
+
+Далее во всех местах где нужна отладка используйте примерно вот такой код:
+
+DEBUG echo "File is $filename"
+Или даже вот такой:
+
+DEBUG set -x
+
+
+
+... отлаживаемая часть скрипта
+
+
+
+DEBUG set +x
+Когда отладка скрипта будет закончена можно просто присвоить переменной _DEBUG значение off.
+
+Рассмотрим вот такой скрипт:
+
+#!/bin/bash
+
+_DEBUG="on"
+
+function DEBUG()
+
+{
+
+ [ "$_DEBUG" == "on" ] &&  $@ || :
+
+}
+
+
+
+DEBUG echo 'Reading files'
+
+for i in *
+
+do
+
+  grep 'something' $i > /dev/null
+
+  [ $? -eq 0 ] && echo "Found in $i file" || :
+
+done
+
+DEBUG set -x
+
+a=2
+
+b=3
+
+c=$(( $a + $b ))
+
+DEBUG set +x
+
+echo "$a + $b = $c"
+Сохраним скрипт, выполним и посмотрим на результат выполнения:
+
+Reading files
+
+Found in xyz.txt file
+
++ a=2
+
++ b=3
+
++ c=5
+
++ DEBUG set +x
+
++ '[' on == on ']'
+
++ set +x
+
+2 + 3 = 5
+Теперь установим значение переменной _DEBUG в off и попробуем ещё раз выполнить скрипт. В результате мы увидим следующее:
+
+Found in xyz.txt file
+
+2 + 3 = 5
+То что вы видели - пример простой и эффективной отладки скрипта.
+
+================================================================
+Bash shell offers debugging options which can be turn on or off using set command.
+• set -x : Display commands and their arguments as they are executed.
+• set -v : Display shell input lines as they are read.
+• set -n : Read commands but do not execute them. This may be used to check a shell script for syntax errors.
+
+Another example using set -n and set -o noexec:
+#!/bin/bash
+set-n # only read command but do not execute them
+set-o noexec
+================================================================
+
+================================================================
+
+================================================================
+
+================================================================
+
+================================================================

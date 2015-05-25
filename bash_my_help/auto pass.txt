@@ -1,0 +1,222 @@
+
+
+
+
+
+
+
+
+
+======================================
+
+======================================
+
+======================================
+
+======================================
+
+======================================
+
+======================================
+#!/usr/bin/expect -f
+
+set host XXX
+set user XXX
+set password XXX
+set remote_path XXX
+set local_path XXX
+
+# disables the timeout, so script waits as long as it takes for the transfer
+set timeout -1
+
+# call rsync
+spawn rsync -av -e ssh $user@$host:$remote_path $local_path
+
+# avoids that if the output is to large, the earlier bytes won't be fotgotten
+match_max 100000
+
+# we're expecting the password prompt, we use a pattern so it can be anything that contains password: or Password
+expect  "*?assword:" { send "$password\r"}
+
+# send a newline to make sure we get back to the command line
+send -- "\r"
+
+# wait for the end-of-file in the output
+expect eof
+======================================
+#!/usr/bin/expect -f
+# exp_internal 1    ;# uncomment to turn on expect debugging
+set timeout -1
+spawn rsync -av -e ssh "/(...)/webs" xusernamex@xdomainx.com:/home/webs
+expect "password:"
+send "xpasswordx\r"
+expect eof
+======================================
+username=$1;
+newpass=$2;
+export HISTIGNORE="expect*";
+ 
+expect -c "
+        spawn passwd $username
+        expect "?assword:"
+        send \"$newpass\r\"
+        expect "?assword:"
+        send \"$newpass\r\"
+        expect eof"
+ 
+export HISTIGNORE="";
+======================================
+pass=123
+expect -c "
+spawn ssh -p 22 admin@192.168.0.1;
+expect password ;
+send \"$pass\n\" ;
+send \"cd /var/logr\";
+expect \"ssh>\""
+======================================
+#!/bin/bash
+#!/bin/expect
+expect -c 'spawn ssh -p 22 user@host;
+expect assword ;
+send "password\n" ;
+send "cd /var/www/project_path\r";
+send "sudo svn up\r";
+expect assword ;
+send "password\n" ;
+expect "ssh>"'
+echo "Update finished!"
+
+#!/bin/bash - директива которая указывает местоположения непосредственно bash обработчика
+#!/bin/expect - указывает местоположение обработчика expect
+
+expect -c '...' - выполняет запуск консольных команд с перехватом ввода - вывода с помощью expect
+spawn ssh -p 22 user@host; - конектимся к удаленному хосту с указаным именем пользователя
+expect assword; - команда которая перехватывает ввод пароля и ждет когда мы его пошлем из нашего скрипта
+send "password\n"; - посылаем запросившему серверу пароль пользователя в удаленной системе
+send "cd /var/www/project_path\r"; - переходим в папку с проектом
+send "sudo svn up\r"; - выполняем обноление из SVN с правами админа (предпологаем что наш юзер имеет права для віполнения команды sudo)
+expect assword ; - перехватываем ввод пароля
+send "password\n"; - отправляем пароль пользователя
+expect "ssh>" - запрашиваем консоль
+echo "Update finished!" - информируем об успешном обновлении
+======================================
+#!/usr/bin/expect -f
+spawn ssh aspen
+expect "password: "
+send "PASSWORD\r"
+expect "$ "
+send "ps -ef |grep apache\r"
+expect "$ "
+send "exit\r"
+======================================
+#!/bin/bash
+
+HOST="remote-hostname"
+USER="remote-user"
+PASS="remore-user-password"
+CMD=$@
+
+VAR=$(expect -c "
+spawn ssh -o StrictHostKeyChecking=no $USER@$HOST $CMD
+match_max 100000
+expect \"*?assword:*\"
+send -- \"$PASS\r\"
+send -- \"\r\"
+expect eof
+")
+echo "==============="
+======================================
+#!/bin/bash
+
+read -s PWD
+
+/usr/bin/expect <<EOD
+spawn ssh -oStrictHostKeyChecking=no -oCheckHostIP=no usr@$myhost.example.com'
+expect "password"
+send "$PWD\n" 
+EOD
+echo "you're out"
+======================================
+Выполнение команды настройки на удалённом компьютере
+
+01: #!/usr/bin/expect
+02: spawn ssh <имя_пользователя>@comp052
+03: expect "password:"
+04: send "<пароль_пользователя>\r"
+05: expect -re "\\$ $"
+06: send "su\r"
+07: expect "(Password:|Пароль:)"
+08: send "<пароль_root>\r"
+09: expect -re "# $"
+10: exec date > /tmp/datesync.tmp
+11: exec cat /tmp/datesync.tmp
+12: set newtime [exec cat /tmp/datesync.tmp]
+13: send "date -s \"$newtime\"\r"
+14: expect -re "# $"
+15: send "exit\r"
+16: expect -re "\\$ $"
+17: send "logout\r"
+18: expect "closed."
+19: exit 0
+======================================
+Автоматизация выполнения команды rsync на удалённом компьютере
+
+01: #!/usr/bin/expect -f
+02: if {[llength $argv] != 2} {
+03:   puts "Вызов: auto_rsync.exp <ИМЯ_ХОСТА> <ПАРОЛЬ_ROOT>"
+04:   exit 1
+05: }
+06: set hostname [lindex $argv 0]
+07: set password [lindex $argv 1]
+08: set timeout -1
+09: spawn date
+10: expect -re "# $"
+11: spawn rsync -av -e ssh $hostname:/etc /archive/sys
+12: expect "password:" {send "$password\r"}
+13: expect -re "# $"
+14: spawn date
+15: expect -re "# $"
+16: spawn rsync -av -e ssh $hostname:/usr/etc /archive/sys
+17: expect "password:" {send "$password\r"}
+18: expect -re "# $"
+19: spawn date
+20: expect -re "# $"
+21: spawn rsync -av -e ssh $hostname:/usr/work /archive/works
+22: expect "password:" {send "$password\r"}
+23: expect -re "# $"
+24: spawn date
+25: expect -re "# $"
+26: exit 0
+======================================
+простой скрипт автоубивания ненужных процессов для гимназии. В своём же кабинете я модифицировал скрипт и для автовыключения машин:
+
+guest@0-315-gymn2 ~ $ cat scripty 
+#!/usr/bin/expect -f
+set timeout 2
+set USER "user"
+set HOST "2"
+set PASS "2357"
+# Начало сценария
+ while 1 {
+ foreach HOST {2 3 5 7} { 
+  spawn ssh $USER@192.168.0.$HOST
+  expect {
+  "(yes/no)?*" {
+  send "yes\r"
+  }
+  } 
+  expect "word:"
+  send "$PASS\r"
+  expect "$*"
+  send "su\r"
+  expect "word:*"
+  send "supassword\r"
+  expect "#*"
+  send "/sbin/shutdown 0 -hP\r"
+  expect "#*"
+  send "exit\r"
+  expect "$*"
+  send "exit\r"
+  expect eof
+ }
+ }
